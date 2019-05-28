@@ -1,0 +1,24 @@
+.twitlist-ui-container {
+  display: flex;
+  justify-content: space-between;
+  background-color: #ddf4ff;
+  color: #333;
+}
+
+.twitlist-info-container {
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+
+.twitlist-ui-container button {
+  color: #333;
+  background-color: #eee;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.twitlist-ui-container button:hover {
+  background-color: #ccc;
+}

@@ -1,0 +1,8 @@
+{
+  "name": "twitlist",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "<hsubox@gmail.com>",
+  "license": "MIT",
+  "private": false
+}

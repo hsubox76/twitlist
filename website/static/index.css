@@ -9,6 +9,10 @@ button {
   font-size: 1rem;
 }
 
+h2 {
+  margin: 10px;
+}
+
 #profile-container {
   display: flex;
   align-items: center;
@@ -28,17 +32,54 @@ button {
   display: none;
 }
 
+#user-add-form.shown {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  align-items: flex-start;
+  border-top: 1px solid steelblue;
+  border-bottom: 1px solid steelblue;
+  padding: 5px 0;
+}
+
+#user-add-form.shown > * {
+  margin: 5px 0;
+}
+
+#user-description {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 1rem;
+  width: 400px;
+}
+
 #user-list-container {
   display: table;
-  border-spacing: 5px;
+  border-spacing: 10px 5px;
 }
 
 .user-row {
   display: table-row;
 }
 
+.header-row {
+  display: table-row;
+}
+
+.header-row > div {
+  display: table-cell;
+  font-size: 1.1rem;
+  padding: 5px;
+  border-bottom: 1px solid #ccc;
+}
+
 .user-row > div {
   display: table-cell;
   padding: 5px;
-  background-color: #efefef;
+  border-bottom: 1px solid #ccc;
+}
+
+.user-row a {
+  color: steelblue;
 }

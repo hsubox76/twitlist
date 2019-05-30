@@ -39,12 +39,10 @@ sendMessage({ action: "GET_USER" })
     } else if (response.knownUsers) {
       knownUsers = response.knownUsers;
       addTweetUI();
-      startMutationObserver();
+      startMutationObservers();
     }
   })
   .catch(e => console.error(e));
-
-const tweetEls = document.getElementsByClassName("tweet");
 
 function getFirstChildWithClass(parent, className) {
   if (!parent) return null;
@@ -103,11 +101,11 @@ function updateActionLink(containerEl, screenname, userId) {
 }
 
 function removeTweetUI() {
-  for (const tweetEl of tweetEls) {
-    const existingContainerEl = getFirstChildWithClass(tweetEl, 'twitlist-ui-container');
-    if (existingContainerEl && existingContainerEl.parentElement) {
-      existingContainerEl.innerHtml = '';
-      existingContainerEl.parentElement.removeChild(existingContainerEl);
+  const containerEls = document.getElementsByClassName("twitlist-ui-container");
+  for (const containerEl of containerEls) {
+    if (containerEl.parentElement) {
+      containerEl.innerHtml = '';
+      containerEl.parentElement.removeChild(containerEl);
     }
   }
 }
@@ -120,10 +118,9 @@ function getContainerEl(tweetEl) {
   } else {
     containerEl = document.createElement('div');
     containerEl.className = 'twitlist-ui-container';
-    const contentEl = getFirstChildWithClass(tweetEl, 'content');
     const tweetTextEl = getFirstChildWithClass(tweetEl, 'js-tweet-text-container');
-    if (contentEl && tweetTextEl) {
-      contentEl.insertBefore(containerEl, tweetTextEl);
+    if (tweetTextEl && tweetTextEl.parentElement) {
+      tweetTextEl.parentElement.insertBefore(containerEl, tweetTextEl);
     } else {
       return null;
     }
@@ -132,29 +129,66 @@ function getContainerEl(tweetEl) {
 }
 
 function addTweetUI() {
+  console.log('addTweetUI called');
+  const tweetEls = document.getElementsByClassName("tweet");
   for (const tweetEl of tweetEls) {
     const userId = tweetEl.dataset.userId;
     const screenname = tweetEl.dataset.screenName;
-    if (!screenname) return;
+    if (!screenname) continue;
     const screennameLower = screenname.toLowerCase();
 
     const containerEl = getContainerEl(tweetEl);
-    if (!containerEl) return;
+    if (!containerEl) continue;
 
     updateInfoEl(containerEl, screennameLower);
     updateActionLink(containerEl, screennameLower, userId);
   }
 }
 
+// When tweets are added to UI (by scrolling, etc.)
 const mutationObserver = new MutationObserver(function(mutations) {
-  mutationObserver.disconnect();
+  disconnectMutationObservers();
   addTweetUI();
-  setTimeout(() => startMutationObserver(), 100);
+  setTimeout(() => startMutationObservers(), 100);
 });
 
-function startMutationObserver() {
-  mutationObserver.observe(document.getElementById("timeline"), {
-    childList: true,
-    subtree: true
-  });
+// When permalink overlay is turned on or off.
+const overlayMutationObserver = new MutationObserver(function(mutations) {
+  disconnectMutationObservers();
+  addTweetUI();
+  setTimeout(() => startMutationObservers(), 100);
+});
+
+// When page changes (navigation within SPA)
+const bodyMutationObserver = new MutationObserver(function(mutations) {
+  console.log('body mutation observer triggered');
+  disconnectMutationObservers();
+  addTweetUI();
+  setTimeout(() => startMutationObservers(), 100);
+});
+
+function disconnectMutationObservers() {
+  mutationObserver.disconnect();
+  overlayMutationObserver.disconnect();
+  bodyMutationObserver.disconnect();
+}
+
+function startMutationObservers() {
+  if (document.body) {
+    bodyMutationObserver.observe(document.body, {
+      attributeFilter: ['class']
+    });
+  }
+  if (document.getElementById("timeline")) {
+    mutationObserver.observe(document.getElementById("timeline"), {
+      childList: true,
+      subtree: true
+    });
+  }
+  if (document.getElementById("permalink-overlay")) {
+    overlayMutationObserver.observe(document.getElementById("permalink-overlay"), {
+      childList: true,
+      subtree: true
+    });
+  }
 }

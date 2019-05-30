@@ -3,7 +3,12 @@
   "version": "1.0",
   "description": "Adds custom user notes",
   "permissions": [
-  "http://twitter.com/","https://twitter.com/","tabs","activeTab","storage"
+    "http://twitter.com/",
+    "https://twitter.com/",
+    "tabs",
+    "activeTab",
+    "storage",
+    "declarativeContent"
   ],
   "background": {
     "page": "background.html",
@@ -13,14 +18,14 @@
     {
       "matches": ["http://www.twitter.com/*",
                    "https://twitter.com/*"],
-      "js": ["main.js"],
+      "js": ["main.bundle.js"],
       "css": ["twitlist.css"],
       "run_at": "document_end"
     }
   ],
   "content_security_policy":
     "script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://firestore.googleapis.com https://www.googleapis.com https://apis.google.com; object-src 'self' https://*.googleapis.com",
-  "browser_action": {
+  "page_action": {
     "default_popup": "popup.html",
     "default_icon": {
       "16": "images/get_started16.png",

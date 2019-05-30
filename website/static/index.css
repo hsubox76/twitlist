@@ -1,0 +1,44 @@
+html {
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+  border: 1px solid #ccc;
+  padding: 5px;
+  font-size: 1rem;
+}
+
+#profile-container {
+  display: flex;
+  align-items: center;
+}
+
+#login-text {
+  margin: 10px;
+}
+
+#login-button {
+  border: 1px solid #ccc;
+  padding: 5px;
+  font-size: 1rem;
+}
+
+#user-add-form {
+  display: none;
+}
+
+#user-list-container {
+  display: table;
+  border-spacing: 5px;
+}
+
+.user-row {
+  display: table-row;
+}
+
+.user-row > div {
+  display: table-cell;
+  padding: 5px;
+  background-color: #efefef;
+}

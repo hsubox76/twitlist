@@ -1,0 +1,37 @@
+.twitlist-popup {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  width: 200px;
+  box-shadow: 0 0 0 2px #1da1f2;
+  padding: 5px;
+}
+
+.twitlist-popup h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+}
+
+.twitlist-popup h2 {
+  font-size: 1rem;
+  margin: 5px 0;
+}
+
+.twitlist-popup p {
+  margin: 8px 0;
+}
+
+.twitlist-popup button {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  background-color: #1da1f2;
+  color: white;
+  padding: 4px;
+}
+
+#login-text {
+  font-size: 0.9rem;
+  padding: 5px 0;
+}

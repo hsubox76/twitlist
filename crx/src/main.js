@@ -86,7 +86,7 @@ function removeTweetUI() {
   const containerEls = document.getElementsByClassName("twitlist-ui-container");
   for (const containerEl of containerEls) {
     if (containerEl.parentElement) {
-      containerEl.innerHtml = "";
+      containerEl.innerHTML = "";
       containerEl.parentElement.removeChild(containerEl);
     }
   }
@@ -124,6 +124,14 @@ function addTweetUI() {
     const containerEl = getOrCreateContainerEl(tweetEl);
     if (!containerEl) continue;
 
+    const existingInfoEl = getChildWithClass(
+      containerEl,
+      "twitlist-info-container"
+    );
+    if (!existingInfoEl) {
+      // clear it out if it only had an action link.
+      containerEl.innerHTML = '';
+    }
     updateInfoEl(containerEl, screennameLower);
     updateActionLink(containerEl, screennameLower, userId);
   }

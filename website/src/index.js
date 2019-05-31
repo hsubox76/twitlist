@@ -36,9 +36,8 @@ function init() {
       user = fetchedUser;
       renderHeader(user);
       getList(user.uid).then(function renderFetchedData() {
-        renderList();
-        renderSharedLists();
         renderAddForm();
+        renderContent();
       });
     } else {
       renderHeader();
@@ -81,6 +80,11 @@ function renderHeader(user) {
   }
 }
 
+function renderContent() {
+  renderList();
+  renderSharedLists();
+}
+
 function postNewNote(e) {
   e.preventDefault();
   if (!user.uid) return;
@@ -89,6 +93,10 @@ function postNewNote(e) {
   const twitterId = getValueAtId("user-twitter-id");
   if (!description || !screenname) return;
   // TODO: disable form
+  const userAddButton = document.getElementById("user-add-submit");
+  const userDescription = document.getElementById("user-description");
+  userAddButton.setAttribute('disabled', true);
+  userDescription.setAttribute('disabled', true);
   firebase
     .firestore()
     .collection("lists")
@@ -102,9 +110,15 @@ function postNewNote(e) {
     .then(function onSuccessfulPost() {
       window.history.pushState({}, "", "/");
       const userAddForm = document.getElementById("user-add-form");
-      userAddForm.classList = "container";
-      getList(user.uid).then(renderList);
-      // TODO: enable form (even though it's hidden)
+      userAddForm.style.display = 'none';
+      getList(user.uid).then(renderContent);
+      userAddButton.setAttribute('disabled', false);
+      userDescription.setAttribute('disabled', false);
+    })
+    .catch(function onFailedPost(e) {
+      console.error(e);
+      userAddButton.setAttribute('disabled', false);
+      userDescription.setAttribute('disabled', false);
     });
 }
 
@@ -152,7 +166,6 @@ function onEditClick(e) {
 }
 
 window.addEventListener('popstate', () => {
-  console.log('popstate');
   renderAddForm();
 });
 

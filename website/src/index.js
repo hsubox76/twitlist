@@ -6,7 +6,8 @@ import {
   appendNewElement,
   setTextContentForId,
   getValueAtId,
-  getParams
+  getParams,
+  deleteElement
 } from "../../shared/dom-utils";
 
 firebase.initializeApp(firebaseConfig);
@@ -23,16 +24,20 @@ function login() {
 }
 
 function logout() {
+  document.getElementById('content-container').style.display = 'none';
   return firebase.auth().signOut();
 }
 
 function init() {
   firebase.auth().onAuthStateChanged(function handleAuthState(fetchedUser) {
+    document.getElementById('content-container').style.display = 'block';
+    document.getElementById('content-loading-container').style.display = 'none';
     if (fetchedUser) {
       user = fetchedUser;
       renderHeader(user);
       getList(user.uid).then(function renderFetchedData() {
         renderList();
+        renderSharedLists();
         renderAddForm();
       });
     } else {
@@ -103,10 +108,13 @@ function postNewNote(e) {
     });
 }
 
-function renderAddForm() {
-  const params = getParams();
-  if (!params.screenname) return;
+function renderAddForm(params = getParams()) {
   const userAddForm = document.getElementById("user-add-form");
+  if (!params.screenname) {
+    userAddForm.style.display = 'none';
+    return;
+  }
+  userAddForm.style.display = 'flex';
   const isEditMode = params.mode === "edit";
   appendNewElement(userAddForm, {
     tag: "input",
@@ -120,7 +128,7 @@ function renderAddForm() {
     id: "user-screen-name",
     value: params.screenname
   });
-  userAddForm.classList = "container shown";
+  userAddForm.style.display = "flex";
   setTextContentForId(
     "form-text",
     `${isEditMode ? "Edit" : "Add a"} note about user: @${params.screenname}`
@@ -135,37 +143,71 @@ function renderAddForm() {
   userAddForm.addEventListener("submit", postNewNote);
 }
 
+function onEditClick(e) {
+  e.preventDefault();
+  const data = e.target.dataset;
+  window.history.pushState({}, '',
+    `/?screenname=${data.screenname}&tid=${data.tid}&mode=edit`);
+  renderAddForm(Object.assign({ mode: 'edit' }, data));
+}
+
+window.addEventListener('popstate', () => {
+  console.log('popstate');
+  renderAddForm();
+});
+
 function renderList() {
-  const listContainer = document.getElementById("user-list-container");
-  listContainer.innerHTML = "";
-  if (list.length) {
-    const headerRow = appendNewElement(listContainer, {
-      className: "header-row"
+  renderTableContainer('user-list', 'your list', list.length);
+  const listTable = document.getElementById("user-list-table");
+  listTable.innerHTML = "";
+  const headerRow = appendNewElement(listTable, {
+    className: "header-row"
+  });
+  appendNewElement(headerRow, { text: "Twitter User" });
+  appendNewElement(headerRow, { text: "Your Note" });
+  for (const user of list) {
+    const userRow = appendNewElement(listTable, {
+      className: "user-row"
     });
-    appendNewElement(headerRow, { text: "Twitter User" });
-    appendNewElement(headerRow, { text: "Your Note" });
-    for (const user of list) {
-      const userRow = appendNewElement(listContainer, {
-        className: "user-row"
-      });
-      const usernameCell = appendNewElement(userRow, {
-        className: "username-cell"
-      });
-      appendNewElement(usernameCell, {
-        tag: "a",
-        href: `https://twitter.com/${user.screenname}`,
-        target: "_blank",
-        text: `@${user.screenname}`
-      });
-      appendNewElement(userRow, { text: user.description });
-      const editCell = appendNewElement(userRow, { className: "edit-cell" });
-      appendNewElement(editCell, {
-        tag: "a",
-        href: `/?screenname=${user.screenname}&tid=${user.twitterId}&mode=edit`,
-        text: "edit"
-      });
-    }
+    const usernameCell = appendNewElement(userRow, {
+      className: "username-cell"
+    });
+    appendNewElement(usernameCell, {
+      tag: "a",
+      href: `https://twitter.com/${user.screenname}`,
+      target: "_blank",
+      text: `@${user.screenname}`
+    });
+    appendNewElement(userRow, { text: user.description });
+    const editCell = appendNewElement(userRow, { className: "edit-cell" });
+    appendNewElement(editCell, {
+      tag: "a",
+      onClick: onEditClick,
+      data: {
+        screenname: user.screenname,
+        tid: user.twitterId
+      },
+      href: `/?screenname=${user.screenname}&tid=${user.twitterId}&mode=edit`,
+      text: "edit"
+    });
   }
+}
+
+function renderSharedLists() {
+  renderTableContainer('shared-lists', 'shared lists', 'blah');
+}
+
+function renderTableContainer(name, title, content) {
+  const existingEl = document.getElementById(name + '-container');
+  if (existingEl) deleteElement(existingEl);
+  if (!content) return;
+  const contentContainer = document.getElementById('content-container');
+  const containerEl = appendNewElement(contentContainer, {
+    id: name + '-container',
+    className: 'container'
+  });
+  appendNewElement(containerEl, { tag: 'h2', text: title });
+  appendNewElement(containerEl, { id: name + '-table' });
 }
 
 init();

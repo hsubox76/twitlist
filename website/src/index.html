@@ -11,16 +11,17 @@
           <button id="login-button">log in</button>
         </div>
       </div>
-      <form id="user-add-form" class="container">
-        <div id="form-text"></div>
-        <textarea id="user-description" rows=4></textarea>
-        <div>
-          <button id="user-add-submit">add note</button>
-        </div>
-      </form>
-      <div class="container">
-        <h2>your notes</h2>
-        <div id="user-list-container"></div>
+      <div id="content-loading-container" class="container">
+        <div class="spinner"></div>
+      </div>
+      <div id="content-container">
+        <form id="user-add-form" class="container">
+          <div id="form-text"></div>
+          <textarea id="user-description" rows=4></textarea>
+          <div>
+            <button id="user-add-submit">add note</button>
+          </div>
+        </form>
       </div>
   </body>
 </html>

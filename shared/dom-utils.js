@@ -14,6 +14,14 @@ export function buildElement(options) {
       case 'text':
         newElement.textContent = options[attr];
         break;
+      case 'onClick':
+        newElement.onclick = options[attr];
+        break;
+      case 'data':
+        for (const dataKey in options[attr]) {
+          newElement.dataset[dataKey] = options[attr][dataKey];
+        }
+        break;
       case 'className':
         newElement.classList = options[attr];
         break;
@@ -44,7 +52,7 @@ export function getValueAtId(id) {
 
 export function getParams() {
   const queryString = window.location.search;
-  if (!queryString) return;
+  if (!queryString) return {};
   let params = {};
   queryString.slice(1).split('&').forEach(pair => {
     const parts = pair.split('=');

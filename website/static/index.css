@@ -16,6 +16,31 @@ h2 {
   border-bottom: 1px solid #ccc;
 }
 
+#content-container {
+  display: none;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#content-loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.spinner {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
 #header-container {
   display: flex;
   align-items: center;
@@ -44,10 +69,6 @@ h2 {
 
 #user-add-form {
   display: none;
-}
-
-#user-add-form.shown {
-  display: flex;
   flex-direction: column;
   margin: 10px;
   align-items: stretch;
@@ -55,7 +76,7 @@ h2 {
   background-color: steelblue;
 }
 
-#user-add-form.shown > * {
+#user-add-form > * {
   margin: 5px 0;
 }
 
@@ -67,7 +88,7 @@ h2 {
   resize: none;
 }
 
-#user-list-container {
+#user-list-table {
   display: table;
   border-spacing: 10px 5px;
 }
@@ -97,6 +118,7 @@ h2 {
 .user-row > div {
   display: table-cell;
   padding: 5px;
+  max-width: 400px;
   border-bottom: 1px solid #ccc;
 }
 

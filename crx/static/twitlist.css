@@ -9,8 +9,14 @@
 
 .twitlist-info-container {
   font-style: italic;
-  display: flex;
-  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.twitlist-ui-container .action-link {
+  flex-shrink: 0;
 }
 
 .twitlist-ui-container a {

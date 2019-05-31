@@ -1,6 +1,7 @@
 html {
   font-size: 16px;
   font-family: Arial, Helvetica, sans-serif;
+  background-color: #efefef;
 }
 
 button {
@@ -10,16 +11,29 @@ button {
 }
 
 h2 {
-  margin: 10px;
+  margin: 0 0 0 5px;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
 }
 
-#profile-container {
+#header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: steelblue;
+}
+
+.login-container {
   display: flex;
   align-items: center;
 }
 
 #login-text {
-  margin: 10px;
+  margin-right: 10px;
 }
 
 #login-button {
@@ -36,10 +50,9 @@ h2 {
   display: flex;
   flex-direction: column;
   margin: 10px;
-  align-items: flex-start;
-  border-top: 1px solid steelblue;
-  border-bottom: 1px solid steelblue;
-  padding: 5px 0;
+  align-items: stretch;
+  color: white;
+  background-color: steelblue;
 }
 
 #user-add-form.shown > * {
@@ -51,12 +64,18 @@ h2 {
   border-radius: 4px;
   padding: 4px;
   font-size: 1rem;
-  width: 400px;
+  resize: none;
 }
 
 #user-list-container {
   display: table;
   border-spacing: 10px 5px;
+}
+
+.container {
+  background-color: white;
+  margin: 10px;
+  padding: 10px;
 }
 
 .user-row {
@@ -69,8 +88,9 @@ h2 {
 
 .header-row > div {
   display: table-cell;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   padding: 5px;
+  color: #777;
   border-bottom: 1px solid #ccc;
 }
 

@@ -56,7 +56,7 @@ module.exports = [{
     ]
 },
 {
-  mode: 'production',
+  mode: 'development',
   entry: {
       main: './crx/src/main.js',
       background: './crx/src/background.js',

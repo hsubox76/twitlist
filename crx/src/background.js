@@ -1,14 +1,18 @@
-import { firebaseConfig } from '../../shared/firebase-config';
+import { firebaseConfig } from "../../shared/firebase-config";
 
 firebase.initializeApp(firebaseConfig);
 
 let user = null;
 const provider = new firebase.auth.TwitterAuthProvider();
+let unsubscribe = null;
 
 firebase.auth().onAuthStateChanged(function(fetchedUser) {
-  console.log('onAuthStateChanged: user = ', fetchedUser)
+  console.log("onAuthStateChanged: user = ", fetchedUser);
   if (fetchedUser) {
     user = fetchedUser;
+  } else {
+    unsubscribe && unsubscribe();
+    unsubscribe = null;
   }
   // Change extension icon based on login state.
   // chrome.tabs.query({active:true, windowType:"normal", currentWindow: true},function(d){
@@ -19,93 +23,103 @@ firebase.auth().onAuthStateChanged(function(fetchedUser) {
 
 chrome.runtime.onInstalled.addListener(function() {
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-    chrome.declarativeContent.onPageChanged.addRules([{
-      conditions: [new chrome.declarativeContent.PageStateMatcher({
-        pageUrl: {hostContains: 'twitter.com'},
-      })
-      ],
-          actions: [new chrome.declarativeContent.ShowPageAction()]
-    }]);
+    chrome.declarativeContent.onPageChanged.addRules([
+      {
+        conditions: [
+          new chrome.declarativeContent.PageStateMatcher({
+            pageUrl: { hostContains: "twitter.com" }
+          })
+        ],
+        actions: [new chrome.declarativeContent.ShowPageAction()]
+      }
+    ]);
   });
 });
 
-function fetchList(uid) {
-  return firebase.firestore()
-    .collection('lists')
+function subscribeToList(uid) {
+  console.log('subscribeToList called');
+  if (unsubscribe) {
+    unsubscribe();
+  }
+  unsubscribe = firebase
+    .firestore()
+    .collection("lists")
     .doc(uid)
-    .collection('notes')
-    .get()
-    .then(snap => {
+    .collection("notes")
+    .onSnapshot(snap => {
+      console.log('onSnapshot called');
       if (snap) {
         const knownUsers = {};
-        snap.forEach(doc => knownUsers[doc.id] = doc.data());
-        return({ knownUsers });
+        snap.forEach(doc => (knownUsers[doc.id] = doc.data()));
+        console.log('sending message', 'RENDER_LIST', knownUsers);
+        sendMessageToPage({
+          action: "RENDER_LIST",
+          knownUsers
+        });
       } else {
-        return({ error: 'did not get data' });
+        console.error('Could not get list data.');
       }
-    })
-    .catch(e => console.error(e));
+    });
 }
 
 function sendMessageToPage(message) {
-  chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+  chrome.tabs.query({ url: ['https://*.twitter.com/*'] }, tabs => {
     chrome.tabs.sendMessage(tabs[0].id, message);
-  })
+  });
 }
 
-chrome.runtime.onMessage.addListener(
-  (request, sender, sendResponse) => {
-    console.log('got request', request);
-    switch (request.action) {
-      case 'GET_USER':
-        sendResponse({ user });
-        break;
-      case 'SIGN_IN_USER':
-        firebase.auth().signInWithPopup(provider).then(credential => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log("got request", request);
+  switch (request.action) {
+    case "GET_USER":
+      sendResponse({ user });
+      break;
+    case "SIGN_IN_USER":
+      firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then(credential => {
           if (credential.user) {
             user = credential.user;
             // Get screenname if new user and set it as profile displayname
-            if (credential.additionalUserInfo /* && credential.additionalUserInfo.isNewUser */) {
-              console.log(credential.additionalUserInfo.profile);
-              const screenName = credential.additionalUserInfo.profile['screen_name'];
-              if (user.displayName !== screenName) {
-                user.updateProfile({
-                  displayName: screenName
-                })
-                .then(() => sendResponse({ user }));
+            if (credential.additionalUserInfo) {
+              const screenName =
+                credential.additionalUserInfo.profile["screen_name"];
+              if (screenName && user.displayName !== screenName.toLowerCase()) {
+                user
+                  .updateProfile({
+                    displayName: screenName.toLowerCase()
+                  })
+                  .then(() => sendResponse({ user }));
               } else {
                 sendResponse({ user });
               }
             }
             // Can finish asynchronously and send message when it gets
             // the data.
-            fetchList(user.uid).then(response => {
-              if (response.knownUsers) {
-                sendMessageToPage({
-                  action: 'RENDER_LIST',
-                  knownUsers: response.knownUsers
-                });
-              }
-            });
+            subscribeToList(user.uid);
           } else {
-            sendResponse({ error: 'could not get user' });
+            sendResponse({ error: "could not get user" });
           }
         });
-        return true;
-      case 'GET_LIST':
-        fetchList(request.uid).then(sendResponse);
-        return true;
-      case 'SIGN_OUT':
-        firebase.auth().signOut().then(() => 
-          sendResponse({ success: true })
-        );
-        sendMessageToPage({
-          action: 'UPDATE_USER',
-          user: null
-        });
-        return true;
-      default:
-        return true;
-    }
+      return true;
+    case "GET_LIST":
+      subscribeToList(request.uid);
+      sendResponse({ success: true });
+      break;
+    case "SIGN_OUT":
+      unsubscribe && unsubscribe();
+      unsubscribe = null;
+      firebase
+        .auth()
+        .signOut()
+        .then(() => sendResponse({ success: true }));
+      sendMessageToPage({
+        action: "UPDATE_USER",
+        user: null
+      });
+      return true;
+    default:
+      return true;
   }
-)
+});

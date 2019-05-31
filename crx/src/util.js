@@ -4,7 +4,8 @@ export function sendMessage(message) {
       if (response) {
         resolve(response);
       } else {
-        reject(runtime.lastError);
+        console.log('sending message', message);
+        reject(chrome.runtime.lastError);
       }
     });
   });

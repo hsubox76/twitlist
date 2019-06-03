@@ -1,3 +1,46 @@
+export function createRenderer(initialState, root = document.body) {
+  let state = initialState;
+  let subscribers = [];
+  let unsubscribes = [];
+
+  const renderer = {
+    getRoot: () => root,
+    getState: () => state,
+    setState: (newState) => {
+      state = Object.assign({}, state, newState);
+      unrenderSubscribers();
+      renderSubscribers();
+    },
+    render: renderSubscribers,
+    subscribe: (subscriber) => {
+      const exists = subscribers.findIndex(fn => fn.name === subscriber.name);
+      if (exists >= 0) {
+        // remove it
+        subscribers = subscribers.slice(0, exists).concat(subscribers.slice(exists + 1));
+      }
+      subscribers.push(subscriber);
+    }
+  };
+
+  function renderSubscribers() {
+    root.innerHTML = '';
+    unsubscribes = [];
+    for (const subscriber of subscribers) {
+      const subReturn = subscriber(state, root, renderer);
+      if (typeof subReturn === 'function') {
+        unsubscribes.push(subReturn);
+      }
+    }
+  }
+  function unrenderSubscribers() {
+    for (const unsubscribe of unsubscribes) {
+      unsubscribe();
+    }
+  }
+
+  return renderer;
+}
+
 export function deleteElement(element) {
   if (element && element.parentElement) {
     element.parentElement.removeChild(element);

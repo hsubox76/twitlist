@@ -16,9 +16,8 @@ h2 {
   border-bottom: 1px solid #ccc;
 }
 
-#content-container {
-  display: none;
-}
+/* #content-container {
+} */
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
@@ -68,7 +67,7 @@ h2 {
 }
 
 #user-add-form {
-  display: none;
+  display: flex;
   flex-direction: column;
   margin: 10px;
   align-items: stretch;

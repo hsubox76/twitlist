@@ -13,7 +13,6 @@ function logout() {
 }
 
 function handleUserResponse(response) {
-  console.log(response);
   if (response.user) {
     user = response.user;
     loginButton.textContent = "sign out";

@@ -111,6 +111,7 @@ function getOrCreateContainerEl(tweetEl) {
 }
 
 function addTweetUI() {
+  if (!user) return;
   const tweetEls = document.getElementsByClassName("tweet");
   for (const tweetEl of tweetEls) {
     const userId = tweetEl.dataset.userId;

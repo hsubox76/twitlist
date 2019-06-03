@@ -7,7 +7,6 @@ const provider = new firebase.auth.TwitterAuthProvider();
 let unsubscribe = null;
 
 firebase.auth().onAuthStateChanged(function(fetchedUser) {
-  console.log("onAuthStateChanged: user = ", fetchedUser);
   if (fetchedUser) {
     user = fetchedUser;
   } else {
@@ -37,7 +36,6 @@ chrome.runtime.onInstalled.addListener(function() {
 });
 
 function subscribeToList(uid) {
-  console.log('subscribeToList called');
   if (unsubscribe) {
     unsubscribe();
   }
@@ -47,11 +45,9 @@ function subscribeToList(uid) {
     .doc(uid)
     .collection("notes")
     .onSnapshot(snap => {
-      console.log('onSnapshot called');
       if (snap) {
         const knownUsers = {};
         snap.forEach(doc => (knownUsers[doc.id] = doc.data()));
-        console.log('sending message', 'RENDER_LIST', knownUsers);
         sendMessageToPage({
           action: "RENDER_LIST",
           knownUsers
@@ -63,6 +59,7 @@ function subscribeToList(uid) {
 }
 
 function sendMessageToPage(message) {
+  console.log('sending message to page', message);
   chrome.tabs.query({ url: ['https://*.twitter.com/*'] }, tabs => {
     chrome.tabs.sendMessage(tabs[0].id, message);
   });
@@ -81,14 +78,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         .then(credential => {
           if (credential.user) {
             user = credential.user;
+            sendMessageToPage({
+              action: "UPDATE_USER",
+              user
+            });
             // Get screenname if new user and set it as profile displayname
             if (credential.additionalUserInfo) {
-              const screenName =
+              let screenName =
                 credential.additionalUserInfo.profile["screen_name"];
-              if (screenName && user.displayName !== screenName.toLowerCase()) {
+              screenName = screenName.toLowerCase();
+              console.log(user.providerData);
+              if (screenName /*&& user.displayName !== screenName*/) {
                 user
                   .updateProfile({
-                    displayName: screenName.toLowerCase()
+                    displayName: screenName
                   })
                   .then(() => sendResponse({ user }));
               } else {
@@ -110,6 +113,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     case "SIGN_OUT":
       unsubscribe && unsubscribe();
       unsubscribe = null;
+      user = null;
       firebase
         .auth()
         .signOut()

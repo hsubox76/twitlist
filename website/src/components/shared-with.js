@@ -14,6 +14,22 @@ export function renderSharedWith({ listProperties }, parent) {
     });
     return;
   }
+  const addShareeForm = appendNewElement(container, {
+    tag: 'form',
+    id: 'add-sharee-form'
+  });
+  appendNewElement(addShareeForm, {
+    text: 'share with @'
+  });
+  appendNewElement(addShareeForm, {
+    tag: 'input',
+    id: 'add-sharee-screenname',
+    placeholder: 'twitterusername'
+  });
+  appendNewElement(addShareeForm, {
+    tag: 'button',
+    text: 'share'
+  });
   const sortedSharees = listProperties.sharedWith.sort();
   for (const screenname of sortedSharees) {
     const userRow = appendNewElement(table, {

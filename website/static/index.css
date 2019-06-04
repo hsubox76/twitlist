@@ -87,9 +87,14 @@ h2 {
   resize: none;
 }
 
-#user-list-table {
+.table {
   display: table;
   border-spacing: 10px 5px;
+}
+
+.empty-list-message {
+  padding: 15px;
+  font-size: 1.2rem;
 }
 
 .container {

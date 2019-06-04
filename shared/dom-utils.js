@@ -1,14 +1,12 @@
 export function createRenderer(initialState, root = document.body) {
   let state = initialState;
   let subscribers = [];
-  let unsubscribes = [];
 
   const renderer = {
     getRoot: () => root,
     getState: () => state,
     setState: (newState) => {
       state = Object.assign({}, state, newState);
-      unrenderSubscribers();
       renderSubscribers();
     },
     render: renderSubscribers,
@@ -24,17 +22,8 @@ export function createRenderer(initialState, root = document.body) {
 
   function renderSubscribers() {
     root.innerHTML = '';
-    unsubscribes = [];
     for (const subscriber of subscribers) {
-      const subReturn = subscriber(state, root, renderer);
-      if (typeof subReturn === 'function') {
-        unsubscribes.push(subReturn);
-      }
-    }
-  }
-  function unrenderSubscribers() {
-    for (const unsubscribe of unsubscribes) {
-      unsubscribe();
+      subscriber(state, root, renderer);
     }
   }
 

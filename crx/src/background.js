@@ -35,6 +35,11 @@ chrome.runtime.onInstalled.addListener(function() {
   });
 });
 
+// TODO: Unsubscribe etc. on disconnect!
+chrome.runtime.connect().onDisconnect.addListener(function() {
+  // clean up when content script gets disconnected
+})
+
 function subscribeToList(uid) {
   if (unsubscribe) {
     unsubscribe();

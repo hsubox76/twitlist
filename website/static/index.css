@@ -80,6 +80,10 @@ h2 {
   margin: 5px 0;
 }
 
+#user-add-form button:not(:first-child) {
+  margin-left: 10px;
+}
+
 textarea, input {
   border: 1px solid #ccc;
   border-radius: 4px;

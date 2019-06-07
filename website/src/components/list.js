@@ -5,7 +5,7 @@ import { appendNewElement } from "../../../shared/dom-utils";
 export function renderList(
   { user, list, listSortBy, listSortDirection },
   parent,
-  { onSortClick, onEditClick }
+  { onSortClick, onEditClick, onVisibilityToggle }
 ) {
   const sortedList = sortList(list, listSortBy, listSortDirection);
   const { container, table } = renderTableContainer(
@@ -30,9 +30,14 @@ export function renderList(
     onClick: onSortClick
   });
   appendNewElement(headerRow, { text: "Your Note" });
+  appendNewElement(headerRow, { text: "Visible To People You've Shared With" });
   for (const user of sortedList) {
     const userRow = appendNewElement(table, {
-      className: "user-row"
+      className: "user-row",
+      data: {
+        screenname: user.screenname,
+        tid: user.twitterId
+      },
     });
     const usernameCell = appendNewElement(userRow, {
       className: "username-cell"
@@ -44,14 +49,16 @@ export function renderList(
       text: `@${user.screenname}`
     });
     appendNewElement(userRow, { text: user.description });
+    const visibilityCell = appendNewElement(userRow, { className: "visibility-cell" });
+    appendNewElement(visibilityCell, {
+      tag: "input",
+      type: "checkbox",
+      onClick: onVisibilityToggle
+    })
     const editCell = appendNewElement(userRow, { className: "edit-cell" });
     appendNewElement(editCell, {
       tag: "a",
       onClick: onEditClick,
-      data: {
-        screenname: user.screenname,
-        tid: user.twitterId
-      },
       href: `/?screenname=${user.screenname}&tid=${user.twitterId}&mode=edit`,
       text: "edit"
     });

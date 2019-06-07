@@ -1,6 +1,6 @@
 import { appendNewElement } from "../../../shared/dom-utils";
 
-export function renderAddForm(state, parent, { onPostClick }) {
+export function renderAddForm(state, parent, { onPostClick, onCancelClick }) {
   const params = state.params;
   if (!params.screenname) {
     return;
@@ -8,6 +8,7 @@ export function renderAddForm(state, parent, { onPostClick }) {
   const isEditMode = params.mode === "edit";
   const userAddForm = appendNewElement(parent, {
     id: "user-add-form",
+    name: "user-add-form",
     className: "container",
     tag: "form"
   });
@@ -19,6 +20,7 @@ export function renderAddForm(state, parent, { onPostClick }) {
   });
   const userDescriptionInput = appendNewElement(userAddForm, {
     tag: "textarea",
+    name: "user-description",
     id: "user-description",
     rows: 4
   });
@@ -27,6 +29,12 @@ export function renderAddForm(state, parent, { onPostClick }) {
     tag: "button",
     id: "user-add-submit",
     text: "add note"
+  });
+  appendNewElement(buttonContainer, {
+    tag: "button",
+    text: "cancel",
+    type: "nosubmit",
+    onClick: onCancelClick
   });
   if (isEditMode) {
     const listItem = state.list.find(
@@ -39,12 +47,14 @@ export function renderAddForm(state, parent, { onPostClick }) {
   appendNewElement(userAddForm, {
     tag: "input",
     type: "hidden",
+    name: "user-twitter-id",
     id: "user-twitter-id",
     value: params.tid
   });
   appendNewElement(userAddForm, {
     tag: "input",
     type: "hidden",
+    name: "user-screen-name",
     id: "user-screen-name",
     value: params.screenname
   });

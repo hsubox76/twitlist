@@ -38,37 +38,15 @@ export function getList(uid) {
     .catch(e => console.error(e));
 }
 
-export function postNewNote({ user }, renderer) {
-  if (!user.uid) return;
-  const description = getValueAtId("user-description");
-  const screenname = getValueAtId("user-screen-name");
-  const twitterId = getValueAtId("user-twitter-id");
-  if (!description || !screenname) return;
-  const userAddButton = document.getElementById("user-add-submit");
-  const userDescription = document.getElementById("user-description");
-  userAddButton.setAttribute("disabled", true);
-  userDescription.setAttribute("disabled", true);
-  firebase
+export function updateNote(uid, screenname, updates, isNew = true) {
+  const method = isNew ? 'set' : 'update';
+  return firebase
     .firestore()
     .collection("lists")
-    .doc(user.uid)
+    .doc(uid)
     .collection("notes")
     .doc(screenname.toLowerCase())
-    .set({
-      description,
-      twitterId,
+    [method](Object.assign({}, updates, {
       lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-    })
-    .then(function onSuccessfulPost() {
-      // window.history.pushState({}, "", "/");
-      renderer.setState({ params: {} });
-      getList(user.uid).then(({ list, listProperties }) =>
-        renderer.setState({ list, listProperties })
-      );
-    })
-    .catch(function onFailedPost(e) {
-      console.error(e);
-      userAddButton.setAttribute("disabled", false);
-      userDescription.setAttribute("disabled", false);
-    });
+    }));
 }

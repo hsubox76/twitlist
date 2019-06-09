@@ -49,6 +49,9 @@ export function buildElement(options) {
       case 'onClick':
         newElement.onclick = options[attr];
         break;
+      case 'onSubmit':
+        newElement.onsubmit = options[attr];
+        break;
       case 'data':
         for (const dataKey in options[attr]) {
           newElement.dataset[dataKey] = options[attr][dataKey];

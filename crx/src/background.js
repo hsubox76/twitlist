@@ -92,8 +92,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               let screenName =
                 credential.additionalUserInfo.profile["screen_name"];
               screenName = screenName.toLowerCase();
-              console.log(user.providerData);
-              if (screenName /*&& user.displayName !== screenName*/) {
+              if (screenName && user.displayName !== screenName) {
                 user
                   .updateProfile({
                     displayName: screenName

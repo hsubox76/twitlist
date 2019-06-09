@@ -30,28 +30,50 @@ function getTwitterUser(tid) {
   });
 }
 
-exports.onNewUser = functions.auth.user().onCreate(user => {
+exports.onNewUser = functions.auth.user().onCreate(async user => {
   const tid = user.providerData[0].uid;
-  return getTwitterUser(user.providerData[0].uid)
-    .then((tUser) => {
-      const screenName = tUser.screen_name;
-      const userWrite = admin.firestore()
-        .collection('users')
-        .doc(user.uid)
-        .set({
-          tid,
-          screenName: screenName
-        });
-      const screenNameWrite = admin.firestore()
-        .collection('screenNames')
-        .doc(screenName)
-        .set({
-          uid: user.uid,
-          tid
-        });
-      return Promise.all([userWrite, screenNameWrite]);
-    })
-    .catch(e => {
-      console.error(e);
+  let tUser = null;
+  try {
+    tUser = await getTwitterUser(user.providerData[0].uid);
+  } catch (e) {
+    console.error(e);
+  }
+  const screenName = tUser.screen_name;
+  const userWrite = admin.firestore()
+    .collection('users')
+    .doc(user.uid)
+    .set({
+      tid,
+      screenName: screenName
     });
+  const screenNameWrite = admin.firestore()
+    .collection('screenNames')
+    .doc(screenName)
+    .set({
+      uid: user.uid,
+      tid
+    });
+  const listPropsWrite = admin.firestore()
+    .collection('lists')
+    .doc(user.uid)
+    .set({
+      creatorScreenname: screenName,
+      isPublic: false
+    });
+  const pendingSharesDoc = await admin.firestore()
+    .collection('pendingShares')
+    .doc(screenName)
+    .get();
+  if (pendingSharesDoc.exists) {
+    // loop through list IDs in pending share list and write to their sharedWith arrays
+    const listUpdates = pendingSharesDoc.data().sharedLists.map(listId => {
+      return admin.firestore().collection('lists').doc(listId).update({
+        sharedWith: admin.firestore.FieldValue.arrayUnion(user.uid),
+        [`sharedWithScreennames.${screenName}`]: user.uid
+      })
+    });
+    await Promise.all(listUpdates);
+    await pendingSharesDoc.ref.delete();
+  }
+  await Promise.all([userWrite, screenNameWrite, listPropsWrite]);
 });

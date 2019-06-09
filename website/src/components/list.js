@@ -1,12 +1,23 @@
 import { sortList } from "../helpers";
 import { renderTableContainer } from "./table-custom";
 import { appendNewElement } from "../../../shared/dom-utils";
+import { updateNote } from "../db";
 
 export function renderList(
   { user, list, listSortBy, listSortDirection },
   parent,
-  { onSortClick, onEditClick, onVisibilityToggle }
+  { onSortClick, onEditClick }
 ) {
+  function onVisibilityToggle(e) {
+    const data = e.target.closest(".user-row").dataset;
+    updateNote(
+      user.uid,
+      data.screenname,
+      { isPublic: e.target.checked },
+      /* isNew */ false
+    );
+  }
+
   const sortedList = sortList(list, listSortBy, listSortDirection);
   const { container, table } = renderTableContainer(
     parent,
@@ -37,7 +48,7 @@ export function renderList(
       data: {
         screenname: user.screenname,
         tid: user.twitterId
-      },
+      }
     });
     const usernameCell = appendNewElement(userRow, {
       className: "username-cell"
@@ -49,12 +60,14 @@ export function renderList(
       text: `@${user.screenname}`
     });
     appendNewElement(userRow, { text: user.description });
-    const visibilityCell = appendNewElement(userRow, { className: "visibility-cell" });
+    const visibilityCell = appendNewElement(userRow, {
+      className: "visibility-cell"
+    });
     appendNewElement(visibilityCell, {
       tag: "input",
       type: "checkbox",
       onClick: onVisibilityToggle
-    })
+    });
     const editCell = appendNewElement(userRow, { className: "edit-cell" });
     appendNewElement(editCell, {
       tag: "a",

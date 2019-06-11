@@ -3,7 +3,8 @@ import { appendNewElement } from "../../../shared/dom-utils";
 
 export function renderOtherLists(
   { otherLists },
-  parent
+  parent,
+  { setParams }
 ) {
   const { container, table } = renderTableContainer(
     parent,
@@ -29,8 +30,7 @@ export function renderOtherLists(
     appendNewElement(usernameCell, {
       tag: "a",
       // TODO: link to view list
-      href: `https://twitter.com/${list.creatorScreenname}`,
-      target: "_blank",
+      href: `/?listid=${list.creatorUid}&listname=${list.creatorScreenname}`,
       text: `@${list.creatorScreenname}`
     });
   }

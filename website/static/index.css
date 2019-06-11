@@ -14,6 +14,12 @@ button {
 
 a {
   cursor: pointer;
+  color: steelblue;
+}
+
+a:hover {
+  color: #3ba6ff;
+  text-decoration: underline;
 }
 
 h2 {
@@ -52,9 +58,24 @@ h2 {
   justify-content: space-between;
 }
 
+.left-container {
+  display: flex;
+  align-items: center;
+}
+
 .title {
-  font-size: 1.5rem;
+  font-size: 2rem;
   color: steelblue;
+}
+
+.subtitle {
+  font-size: 1.3rem;
+  color: #666;
+}
+
+.subtitle:before {
+  content: '|';
+  margin: 0 10px;
 }
 
 .login-container {
@@ -139,17 +160,17 @@ textarea, input {
   border-bottom: 1px solid #ccc;
 }
 
-.user-row a {
-  color: steelblue;
-}
-
 #add-sharee-form {
   display: flex;
   margin: 10px;
   align-items: center;
   color: white;
-  background-color: #338855;
+  background-color: #317b97;
   padding: 10px;
+}
+
+#add-sharee-form.disabled {
+  background-color: #999;
 }
 
 #add-sharee-form > * {

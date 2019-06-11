@@ -6,10 +6,11 @@ export function createRenderer(initialState, root = document.body) {
     getRoot: () => root,
     getState: () => state,
     setState: (newState) => {
+      const oldState = state || initialState;
       state = Object.assign({}, state, newState);
-      renderSubscribers();
+      renderSubscribers(oldState);
     },
-    render: renderSubscribers,
+    render: () => renderSubscribers(state),
     subscribe: (subscriber) => {
       const exists = subscribers.findIndex(fn => fn.name === subscriber.name);
       if (exists >= 0) {
@@ -20,10 +21,10 @@ export function createRenderer(initialState, root = document.body) {
     }
   };
 
-  function renderSubscribers() {
+  function renderSubscribers(oldState) {
     root.innerHTML = '';
     for (const subscriber of subscribers) {
-      subscriber(state, root, renderer);
+      subscriber(state, root, renderer, oldState);
     }
   }
 
@@ -46,11 +47,15 @@ export function buildElement(options) {
       case 'text':
         newElement.textContent = options[attr];
         break;
-      case 'onClick':
-        newElement.onclick = options[attr];
+      case 'selected':
+        if (options[attr]) {
+          newElement.setAttribute('selected', '');
+        }
         break;
+      case 'onClick':
+      case 'onChange':
       case 'onSubmit':
-        newElement.onsubmit = options[attr];
+        newElement[attr.toLowerCase()] = options[attr];
         break;
       case 'data':
         for (const dataKey in options[attr]) {

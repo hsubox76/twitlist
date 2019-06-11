@@ -1,6 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const request = require('request');
+const { COLL, VISIBILITY } = require('../shared/constants');
 
 admin.initializeApp();
 admin.firestore().settings({ timestampsInSnapshots: true });
@@ -40,28 +41,28 @@ exports.onNewUser = functions.auth.user().onCreate(async user => {
   }
   const screenName = tUser.screen_name;
   const userWrite = admin.firestore()
-    .collection('users')
+    .collection(COLL.USERS)
     .doc(user.uid)
     .set({
       tid,
       screenName: screenName
     });
   const screenNameWrite = admin.firestore()
-    .collection('screenNames')
+    .collection(COLL.SCREEN_NAMES)
     .doc(screenName)
     .set({
       uid: user.uid,
       tid
     });
   const listPropsWrite = admin.firestore()
-    .collection('lists')
+    .collection(COLL.LISTS)
     .doc(user.uid)
     .set({
       creatorScreenname: screenName,
-      isPublic: false
+      visibility: VISIBILITY.PRIVATE
     });
   const pendingSharesDoc = await admin.firestore()
-    .collection('pendingShares')
+    .collection(COLL.PENDING_SHARES)
     .doc(screenName)
     .get();
   if (pendingSharesDoc.exists) {

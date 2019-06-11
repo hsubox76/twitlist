@@ -4,7 +4,7 @@ import { appendNewElement } from "../../../shared/dom-utils";
 
 const provider = new firebase.auth.TwitterAuthProvider();
 
-export function renderHeader({ user, listUnsub }, parent, renderer) {
+export function renderHeader({ user, params, listUnsub }, parent, renderer) {
   function login() {
     return firebase.auth().signInWithPopup(provider)
     .then(credential => {
@@ -42,7 +42,20 @@ export function renderHeader({ user, listUnsub }, parent, renderer) {
     id: "header-container",
     className: "container"
   });
-  appendNewElement(headerContainer, { className: "title", text: "twitlist" });
+  const leftContainer = appendNewElement(headerContainer, {
+    className: "left-container"
+  });
+  appendNewElement(leftContainer, {
+    tag: 'a',
+    className: "title",
+    text: "twitlist",
+    onClick: e => {
+      e.preventDefault();
+      renderer.setState({ params: {} });
+    }
+  });
+  const pageTitle = params.listname ? `@${params.listname}'s list` : 'your list';
+  appendNewElement(leftContainer, { className: "subtitle", text: pageTitle });
   const loginContainer = appendNewElement(headerContainer, {
     className: "login-container"
   });

@@ -4,6 +4,7 @@ import { renderList } from "./list";
 import { renderSharedWith } from "./shared-with";
 import { renderAddForm } from "./add-form";
 import { renderOtherLists } from "./other-lists";
+import { renderOtherList } from "./other-list";
 
 function postNoteFromForm(formData, { user, params }, renderer) {
   if (!user.uid) return;
@@ -41,7 +42,7 @@ function postNoteFromForm(formData, { user, params }, renderer) {
     });
 }
 
-export function renderContent(state, parent, renderer) {
+export function renderContent(state, parent, renderer, oldState) {
   function onPostClick(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -83,18 +84,28 @@ export function renderContent(state, parent, renderer) {
     });
   }
 
+  function setParams(params) {
+    renderer.setState({ params });
+  }
+
   const contentContainer = appendNewElement(parent, {
     id: "content-container"
   });
   state.isLoading && renderLoader(state, contentContainer);
   if (!state.user || !state.list) return;
   renderAddForm(state, contentContainer, { onPostClick, onCancelClick });
-  renderList(state, contentContainer, {
-    onEditClick,
-    onSortClick
-  });
-  renderSharedWith(state, contentContainer, { refreshList });
-  renderOtherLists(state, contentContainer);
+  if (state.params.listid) {
+    renderOtherList(state, contentContainer, {
+      onSortClick
+    });
+  } else {
+    renderList(state, contentContainer, {
+      onEditClick,
+      onSortClick
+    });
+    renderSharedWith(state, contentContainer, { refreshList });
+  }
+  renderOtherLists(state, contentContainer, { setParams });
 }
 
 function renderLoader(state, parent) {

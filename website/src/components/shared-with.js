@@ -12,13 +12,14 @@ export function renderSharedWith(
     const formData = new FormData(e.target);
     const screenname = formData.get("add-sharee-screenname");
     const inputEl = document.getElementById("add-sharee-screenname");
+    const buttonEl = document.getElementById("add-sharee-button");
     inputEl.setAttribute('disabled', true);
+    buttonEl.setAttribute('disabled', true);
+    e.target.classList.add('disabled');
     // TODO: Validate screenname more carefully.
     if (screenname) {
       addSharee(user.uid, screenname)
         .then(() => {
-          inputEl.setAttribute('disabled', false);
-          inputEl.value = '';
           refreshList();
         });
     }
@@ -28,7 +29,6 @@ export function renderSharedWith(
     const data = e.target.dataset;
     const screenname = data.screenname;
     const uid = data.uid;
-    // TODO: Validate screenname more carefully.
     if (screenname) {
       removeSharee(user.uid, screenname, uid).then(() => {
         refreshList();
@@ -63,6 +63,7 @@ export function renderSharedWith(
   });
   appendNewElement(addShareeForm, {
     tag: "button",
+    id: "add-sharee-button",
     text: "share"
   });
   const sortedKeys = Object.keys(listProperties.sharedWithScreennames).sort();

@@ -1,7 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const request = require('request');
-const { COLL, VISIBILITY } = require('../shared/constants');
+const { COLL, VISIBILITY } = require('./constants');
 
 admin.initializeApp();
 admin.firestore().settings({ timestampsInSnapshots: true });

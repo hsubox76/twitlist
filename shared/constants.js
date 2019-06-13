@@ -1,4 +1,4 @@
-export const COLL = {
+const COLL = {
   PENDING_SHARES: 'pendingShares',
   LISTS: 'lists',
   USERS: 'users',
@@ -6,8 +6,13 @@ export const COLL = {
   NOTES: 'notes'
 }
 
-export const VISIBILITY = {
+const VISIBILITY = {
   PRIVATE: 'private',
   SHARED: 'shared',
   PUBLIC: 'public' // list global only
+};
+
+module.exports = {
+  COLL,
+  VISIBILITY
 };

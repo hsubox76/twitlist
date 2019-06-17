@@ -1,15 +1,17 @@
 import { firebaseConfig } from "../../shared/firebase-config";
+import { ACTION, COLL } from '../../shared/constants';
 
 firebase.initializeApp(firebaseConfig);
 
 let user = null;
+let isUIVisible = true;
 const provider = new firebase.auth.TwitterAuthProvider();
 let unsubscribe = null;
 
 firebase.auth().onAuthStateChanged(function(fetchedUser) {
   if (fetchedUser) {
     user = fetchedUser;
-  } else {
+  } else {;
     unsubscribe && unsubscribe();
     unsubscribe = null;
   }
@@ -35,26 +37,21 @@ chrome.runtime.onInstalled.addListener(function() {
   });
 });
 
-// TODO: Unsubscribe etc. on disconnect!
-chrome.runtime.connect().onDisconnect.addListener(function() {
-  // clean up when content script gets disconnected
-})
-
 function subscribeToList(uid) {
   if (unsubscribe) {
     unsubscribe();
   }
   unsubscribe = firebase
     .firestore()
-    .collection("lists")
+    .collection(COLL.LISTS)
     .doc(uid)
-    .collection("notes")
+    .collection(COLL.NOTES)
     .onSnapshot(snap => {
       if (snap) {
         const knownUsers = {};
         snap.forEach(doc => (knownUsers[doc.id] = doc.data()));
         sendMessageToPage({
-          action: "RENDER_LIST",
+          action: ACTION.PAGE.RENDER_LIST,
           knownUsers
         });
       } else {
@@ -73,10 +70,21 @@ function sendMessageToPage(message) {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log("got request", request);
   switch (request.action) {
-    case "GET_USER":
+    case ACTION.BG.GET_UI_VISIBILITY:
+      console.log('sending', isUIVisible);
+      sendResponse({ isUIVisible });
+      break;
+    case ACTION.BG.TOGGLE_UI:
+      isUIVisible = !isUIVisible;
+      sendMessageToPage({
+        action: isUIVisible ? ACTION.PAGE.RENDER_LIST : ACTION.PAGE.HIDE_LIST
+      });
+      sendResponse({ isUIVisible });
+      break;
+    case ACTION.BG.GET_USER:
       sendResponse({ user });
       break;
-    case "SIGN_IN_USER":
+    case ACTION.BG.SIGN_IN_USER:
       firebase
         .auth()
         .signInWithPopup(provider)
@@ -84,7 +92,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           if (credential.user) {
             user = credential.user;
             sendMessageToPage({
-              action: "UPDATE_USER",
+              action: ACTION.PAGE.UPDATE_USER,
               user
             });
             // Get screenname if new user and set it as profile displayname
@@ -110,11 +118,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           }
         });
       return true;
-    case "GET_LIST":
+    case ACTION.BG.GET_LIST:
       subscribeToList(request.uid);
       sendResponse({ success: true });
       break;
-    case "SIGN_OUT":
+    case ACTION.BG.SIGN_OUT:
       unsubscribe && unsubscribe();
       unsubscribe = null;
       user = null;
@@ -123,7 +131,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         .signOut()
         .then(() => sendResponse({ success: true }));
       sendMessageToPage({
-        action: "UPDATE_USER",
+        action: ACTION.PAGE.UPDATE_USER,
         user: null
       });
       return true;

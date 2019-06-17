@@ -1,4 +1,5 @@
 import { sendMessage } from "./util";
+import { ACTION } from '../../shared/constants';
 import {
   deleteElement,
   buildElement,
@@ -12,16 +13,24 @@ import {
 } from "./observers";
 let knownUsers = {};
 let user = null;
+let shouldShowUI = true;
 
 // Listens for messages from background.js
 chrome.runtime.onMessage.addListener(request => {
   console.log('Request received:', request);
-  if (request.action === "RENDER_LIST") {
-    knownUsers = request.knownUsers;
+  if (request.action === ACTION.PAGE.HIDE_LIST) {
+    removeTweetUI();
+    shouldShowUI = false;
+  }
+  if (request.action === ACTION.PAGE.RENDER_LIST) {
+    shouldShowUI = true;
+    if (request.knownUsers) {
+      knownUsers = request.knownUsers;
+    }
     addTweetUI();
     startMutationObservers();
   }
-  if (request.action === "UPDATE_USER") {
+  if (request.action === ACTION.PAGE.UPDATE_USER) {
     user = request.user;
     if (user === null) {
       knownUsers = {};
@@ -34,13 +43,18 @@ chrome.runtime.onMessage.addListener(request => {
   }
 });
 
+// TODO: Unsubscribe etc. on disconnect!
+// chrome.runtime.connect().onDisconnect.addListener(function() {
+  // clean up when content script gets disconnected
+// })
+
 // Asks background process for current user.  If user is found,
 // asks background process to fetch user's list.
-sendMessage({ action: "GET_USER" })
+sendMessage({ action: ACTION.BG.GET_USER })
   .then(response => {
     if (response.user) {
       user = response.user;
-      return sendMessage({ action: "GET_LIST", uid: response.user.uid });
+      return sendMessage({ action: ACTION.BG.GET_LIST, uid: response.user.uid });
     }
   });
 
@@ -83,12 +97,11 @@ function updateActionLink(containerEl, screenname, userId) {
 }
 
 function removeTweetUI() {
-  const containerEls = document.getElementsByClassName("twitlist-ui-container");
+  const containerSelect = document.getElementsByClassName("twitlist-ui-container");
+  const containerEls = Array.prototype.slice.call(containerSelect);
   for (const containerEl of containerEls) {
-    if (containerEl.parentElement) {
-      containerEl.innerHTML = "";
-      containerEl.parentElement.removeChild(containerEl);
-    }
+    containerEl.innerHTML = "";
+    containerEl.parentElement.removeChild(containerEl);
   }
 }
 
@@ -111,7 +124,7 @@ function getOrCreateContainerEl(tweetEl) {
 }
 
 function addTweetUI() {
-  if (!user) return;
+  if (!user || !shouldShowUI) return;
   const tweetEls = document.getElementsByClassName("tweet");
   for (const tweetEl of tweetEls) {
     const userId = tweetEl.dataset.userId;
@@ -138,4 +151,8 @@ function addTweetUI() {
   }
 }
 
-createMutationObservers(addTweetUI);
+function updateTweetUI() {
+  shouldShowUI ? addTweetUI() : removeTweetUI();
+}
+
+createMutationObservers(updateTweetUI);

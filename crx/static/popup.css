@@ -31,6 +31,20 @@
   padding: 4px;
 }
 
+#visibility-button {
+  margin-top: 20px;
+  background-color: #526c93;
+  border: none;
+  color: white;
+}
+
+#visibility-button.outline {
+  margin-top: 20px;
+  color: #526c93;
+  background-color: white;
+  border: 1px solid #526c93;
+}
+
 #login-text {
   font-size: 0.9rem;
   padding: 5px 0;

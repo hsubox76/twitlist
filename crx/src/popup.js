@@ -3,7 +3,8 @@ import { ACTION } from '../../shared/constants';
 
 let loginButton = document.getElementById("login-button");
 let loginText = document.getElementById("login-text");
-let visibilityButton = document.getElementById("visibility-button");
+let visibilitySection = document.getElementById("visibility-section");
+let visibilityCheckbox = document.getElementById("visibility-checkbox");
 
 let user = null;
 
@@ -19,33 +20,33 @@ function handleUserResponse(response) {
   if (response.user) {
     user = response.user;
     loginButton.textContent = "sign out";
-    loginText.textContent = `logged in as ${user.displayName}`;
+    loginText.textContent = `logged in as @${user.displayName}`;
     loginButton.removeEventListener("click", login);
     loginButton.addEventListener("click", logout);
-    visibilityButton.setAttribute('style', 'display: block');
+    loginButton.classList.remove('sign-in');
+    visibilitySection.setAttribute('style', 'display: block');
   } else {
     loginButton.textContent = "sign in with Twitter";
-    loginText.textContent = `not logged in`;
+    loginText.textContent = `you are not logged in`;
     loginButton.removeEventListener("click", logout);
     loginButton.addEventListener("click", login);
-    visibilityButton.setAttribute('style', 'display: none');
+    loginButton.classList.add('sign-in');
+    visibilitySection.setAttribute('style', 'display: none');
   }
 }
 
 function toggleVisibilityText(response) {
   if (response.isUIVisible) {
-    visibilityButton.textContent = 'click to hide UI on tweets';
-    visibilityButton.classList.remove('outline');
+    visibilityCheckbox.checked = true;
   } else {
-    visibilityButton.textContent = 'click to show UI on tweets';
-    visibilityButton.classList.add('outline');
+    visibilityCheckbox.checked = false;
   }
 }
 
 function toggleUI() {
-  sendMessage({ action: ACTION.BG.TOGGLE_UI })
-    .then(toggleVisibilityText);
+  sendMessage({ action: ACTION.BG.TOGGLE_UI });
+    // .then(toggleVisibilityText);
 }
 sendMessage({ action: ACTION.BG.GET_UI_VISIBILITY }).then(toggleVisibilityText);
-visibilityButton.addEventListener("click", toggleUI);
+visibilityCheckbox.addEventListener("change", toggleUI);
 sendMessage({ action: ACTION.BG.GET_USER }).then(handleUserResponse);

@@ -1,24 +1,29 @@
 .twitlist-popup {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
-  width: 200px;
+  width: 300px;
   box-shadow: 0 0 0 2px #1da1f2;
-  padding: 5px;
+  margin: 0;
+  color: #333;
 }
 
 .twitlist-popup h3 {
   font-size: 1.2rem;
   font-weight: bold;
   margin: 0 0 8px 0;
+  padding: 4px;
+  color: white;
+  background-color: #1da1f2;
 }
 
-.twitlist-popup h2 {
-  font-size: 1rem;
-  margin: 5px 0;
-}
-
-.twitlist-popup p {
+.twitlist-popup p, .twitlist-popup h4 {
   margin: 8px 0;
+  padding: 0 4px;
+}
+
+.twitlist-popup h4 {
+  color: #999;
+  font-weight: normal;
 }
 
 .twitlist-popup button {
@@ -26,26 +31,33 @@
   border-radius: 5px;
   font-size: 0.9rem;
   white-space: nowrap;
-  background-color: #1da1f2;
+  background-color: #db6500;
   color: white;
+  padding: 4px;
+  margin: 4px 4px 8px 4px;
+}
+
+.twitlist-popup button.sign-in {
+  background-color: #00a056;
+}
+
+#visibility-section {
   padding: 4px;
 }
 
-#visibility-button {
-  margin-top: 20px;
-  background-color: #526c93;
-  border: none;
-  color: white;
-}
-
-#visibility-button.outline {
-  margin-top: 20px;
-  color: #526c93;
-  background-color: white;
-  border: 1px solid #526c93;
+#visibility-checkbox {
+  margin-right: 5px;
 }
 
 #login-text {
   font-size: 0.9rem;
   padding: 5px 0;
+  padding: 4px;
+  margin: 4px;
+  border: 1px solid #1da1f2;
+}
+
+.footer {
+  background-color: #999;
+  height: 6px;
 }

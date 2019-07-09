@@ -1,5 +1,5 @@
 import { sendMessage } from "./util";
-import { ACTION } from '../../shared/constants';
+import { ACTION, APP_URL } from '../../shared/constants';
 import {
   deleteElement,
   buildElement,
@@ -85,7 +85,7 @@ function updateActionLink(containerEl, screenname, userId) {
     tag: 'a',
     target: 'twitlisttab'
   });
-  let link = `http://localhost:8080?screenname=${screenname}&tid=${userId}`;
+  let link = `${APP_URL}?screenname=${screenname}&tid=${userId}`;
   if (knownUsers[screenname]) {
     actionLinkEl.textContent = "view on twitlist";
     link += "&mode=edit";

@@ -28,8 +28,11 @@ const ACTION = {
   }
 };
 
+const APP_URL = 'https://twitlist-939a3.firebaseapp.com';
+
 module.exports = {
   COLL,
   VISIBILITY,
-  ACTION
+  ACTION,
+  APP_URL
 };

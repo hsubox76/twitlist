@@ -28,11 +28,13 @@ export function renderAddForm(state, parent, { onPostClick, onCancelClick }) {
   appendNewElement(buttonContainer, {
     tag: "button",
     id: "user-add-submit",
+    className: "button-ok",
     text: "add note"
   });
   appendNewElement(buttonContainer, {
     tag: "button",
     text: "cancel",
+    className: "button-cancel",
     type: "nosubmit",
     onClick: onCancelClick
   });

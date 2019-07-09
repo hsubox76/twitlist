@@ -1,25 +1,29 @@
 import { renderTableContainer } from "./table-custom";
 import { appendNewElement } from "../../../shared/dom-utils";
+import { VISIBILITY } from '../../../shared/constants';
 
 export function renderOtherLists(
-  { otherLists },
-  parent,
-  { setParams }
+  { otherLists, publicOtherLists },
+  parent
 ) {
-  const { container, table } = renderTableContainer(
+  const { table } = renderTableContainer(
     parent,
     "other-lists",
     "Other lists shared with you"
   );
-  if (!otherLists || otherLists.length === 0) {
-    appendNewElement(container, {
+  if (!otherLists || !publicOtherLists) {
+    return;
+  }
+  const combinedLists = otherLists.concat(publicOtherLists);
+  if (combinedLists.length === 0) {
+    appendNewElement(table, {
       className: "empty-list-message",
       text: "No one has shared a list with you yet."
     });
     return;
   }
   // TODO: sort by screenname
-  const sortedLists = otherLists.sort();
+  const sortedLists = combinedLists.sort();
   for (const list of sortedLists) {
     const userRow = appendNewElement(table, {
       className: "user-row"
@@ -32,6 +36,10 @@ export function renderOtherLists(
       // TODO: link to view list
       href: `/?listid=${list.creatorUid}&listname=${list.creatorScreenname}`,
       text: `@${list.creatorScreenname}`
+    });
+    appendNewElement(userRow, {
+      className: "visibility-cell",
+      text: list.visibility === VISIBILITY.PUBLIC ? '(shared with everyone)' : ''
     });
   }
 }

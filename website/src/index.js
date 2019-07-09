@@ -1,7 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import { firebaseConfig } from "../../shared/firebase-config";
-import { getList, getGuestList, subscribeToListsSharedWithUser } from "./db";
+import { getList, getGuestList, subscribeToListsSharedWithUser, subscribeToPublicListsSharedWithUser } from "./db";
 import { createRenderer, getParams } from "../../shared/dom-utils";
 import { renderHeader } from "./components/header";
 import { renderContent } from "./components/content";
@@ -42,11 +42,17 @@ function init() {
           renderer.setState({ list, listProperties });
         });
       }
-      if (!renderer.getState().listUnsub) {
-        const unsub = subscribeToListsSharedWithUser(user.uid, (otherLists) => {
+      if (!renderer.getState().unsubShared) {
+        const unsubShared = subscribeToListsSharedWithUser(user.uid, (otherLists) => {
           renderer.setState({ otherLists });
         });
-        renderer.setState({ listUnsub: unsub });
+        renderer.setState({ unsubShared });
+      }
+      if (!renderer.getState().unsubPublic) {
+        const unsubPublic = subscribeToPublicListsSharedWithUser(user.uid, (publicOtherLists) => {
+          renderer.setState({ publicOtherLists });
+        });
+        renderer.setState({ unsubPublic });
       }
     } else {
       const { params } = renderer.getState();

@@ -1,6 +1,7 @@
 import { renderTableContainer } from "./table-custom";
 import { appendNewElement } from "../../../shared/dom-utils";
-import { addSharee, removeSharee } from "../db";
+import { addSharee, removeSharee, updateListProperties } from "../db";
+import { VISIBILITY } from '../../../shared/constants';
 
 export function renderSharedWith(
   { user, listProperties },
@@ -35,16 +36,41 @@ export function renderSharedWith(
       })
     }
   }
+  function onVisibilityToggle(e) {
+    updateListProperties(user.uid, { visibility: e.target.value })
+      .then(() => refreshList());
+  }
   const { container, table } = renderTableContainer(
     parent,
     "shared-with",
-    "You have shared this list with"
+    "This list can be seen by"
   );
-  if (!listProperties.sharedWithScreennames || listProperties.sharedWithScreennames.size === 0) {
-    appendNewElement(container, {
-      className: "empty-list-message",
-      text: "You are not sharing this list with anyone."
-    });
+  const tableHeader = container.getElementsByTagName('h2')[0];
+  const visibilitySelect = appendNewElement(tableHeader, {
+    tag: "select",
+    className: "visibility-select",
+    value: listProperties.visibility,
+    onChange: onVisibilityToggle
+  });
+  appendNewElement(visibilitySelect, {
+    tag: 'option',
+    text: 'nobody',
+    selected: listProperties.visibility === VISIBILITY.PRIVATE,
+    value: VISIBILITY.PRIVATE
+  });
+  appendNewElement(visibilitySelect, {
+    tag: 'option',
+    text: 'certain users (listed below)',
+    selected: listProperties.visibility === VISIBILITY.SHARED,
+    value: VISIBILITY.SHARED
+  });
+  appendNewElement(visibilitySelect, {
+    tag: 'option',
+    text: 'everyone',
+    selected: listProperties.visibility === VISIBILITY.PUBLIC,
+    value: VISIBILITY.PUBLIC
+  });
+  if (listProperties.visibility !== VISIBILITY.SHARED) {
     return;
   }
   const addShareeForm = appendNewElement(container, {
@@ -63,9 +89,17 @@ export function renderSharedWith(
   });
   appendNewElement(addShareeForm, {
     tag: "button",
+    className: "button-ok",
     id: "add-sharee-button",
     text: "share"
   });
+  if (!listProperties.sharedWithScreennames || listProperties.sharedWithScreennames.size === 0) {
+    appendNewElement(table, {
+      className: "empty-list-message",
+      text: "You are not sharing this list with anyone."
+    });
+    return;
+  }
   const sortedKeys = Object.keys(listProperties.sharedWithScreennames).sort();
   for (const screenname of sortedKeys) {
     const userRow = appendNewElement(table, {
@@ -81,7 +115,7 @@ export function renderSharedWith(
       text: `@${screenname}`
     });
     const shareeUid = listProperties.sharedWithScreennames[screenname]
-    const registeredCell = appendNewElement(userRow, {
+    appendNewElement(userRow, {
       className: "registered-cell",
       text: (shareeUid === '_' ? 'not registered' : 'registered')
     });

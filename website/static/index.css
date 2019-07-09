@@ -10,6 +10,24 @@ button {
   border-radius: 4px;
   border: none;
   cursor: pointer;
+  color: white;
+  background-color: #777;
+}
+
+button:hover {
+  box-shadow: inset 0 0 0 50px rgba(255, 255, 255, 0.2);
+}
+
+form button {
+  border: 1px solid white;
+}
+
+.button-cancel {
+  background-color: #777;
+}
+
+.button-ok {
+  background-color: green;
 }
 
 a {
@@ -127,7 +145,7 @@ textarea, input {
 }
 
 .empty-list-message {
-  padding: 15px;
+  padding: 10px 5px;
   font-size: 1.2rem;
 }
 
@@ -180,4 +198,21 @@ textarea, input {
 #add-sharee-screenname {
   height: 24px;
   width: 200px;
+}
+
+#add-everyone-button {
+  margin: 10px;
+  background-color: green;
+  color: white;
+  padding: 10px 15px;
+}
+
+#shared-with-container h2 {
+  display: flex;
+}
+
+#shared-with-container .visibility-select {
+  font-size: 1.1rem;
+  border-color: steelblue;
+  margin-left: 10px;
 }

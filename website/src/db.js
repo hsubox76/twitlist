@@ -38,6 +38,19 @@ export function subscribeToListsSharedWithUser(uid, onData) {
       });
 }
 
+export function subscribeToPublicListsSharedWithUser(uid, onData) {
+  return getRef(COLL.LISTS)
+      .where("visibility", "==", VISIBILITY.PUBLIC)
+      .where("sharedWith", "array-contains", uid)
+      .onSnapshot(snap => {
+        const otherLists = [];
+        snap.forEach(doc => {
+          otherLists.push(Object.assign({ creatorUid: doc.id }, doc.data()))
+        });
+        onData(otherLists);
+      });
+}
+
 export async function getGuestList(uid, listUid) {
   let properties = {};
   try {
@@ -70,6 +83,14 @@ export function getListProperties(uid) {
     })
     .catch(e => {
       throw new Error(`Error getting ${COLL.LISTS}/${uid}: ${e.message}`)
+    });
+}
+
+export function updateListProperties(uid, updates) {
+  return getRef(COLL.LISTS, uid)
+    .update(updates)
+    .catch(e => {
+      throw new Error(`Error updating ${COLL.LISTS}/${uid}: ${e.message}`)
     });
 }
 

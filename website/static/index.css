@@ -178,6 +178,10 @@ textarea, input {
   border-bottom: 1px solid #ccc;
 }
 
+.visibility-cell select {
+  font-size: 0.9rem;
+}
+
 #add-sharee-form {
   display: flex;
   margin: 10px;

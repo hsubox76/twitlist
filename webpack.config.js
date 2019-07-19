@@ -67,7 +67,7 @@ module.exports = [{
 {
   mode: 'development',
   entry: {
-      main: './crx/src/main.js',
+      content: './crx/src/content.js',
       background: './crx/src/background.js',
       popup: './crx/src/popup.js'
   },

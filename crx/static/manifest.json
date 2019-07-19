@@ -18,7 +18,7 @@
     {
       "matches": ["http://www.twitter.com/*",
                    "https://twitter.com/*"],
-      "js": ["main.bundle.js"],
+      "js": ["content.bundle.js"],
       "css": ["twitlist.css"],
       "run_at": "document_end"
     }

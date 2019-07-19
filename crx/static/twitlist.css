@@ -5,6 +5,7 @@
   border-radius: 5px;
   padding: 5px;
   color: #333;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .twitlist-info-container {
@@ -21,6 +22,9 @@
 
 .twitlist-ui-container a {
   display: block;
+  color: rgba(29,161,242,1.00);
+  text-decoration: none;
+  font-style: italic;
 }
 
 .twitlist-ui-container button:hover {

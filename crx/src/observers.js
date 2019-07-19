@@ -35,19 +35,10 @@ export function startMutationObservers() {
       attributeFilter: ["class"]
     });
   }
-  if (document.getElementById("timeline")) {
-    mutationObserver.observe(document.getElementById("timeline"), {
+  if (document.querySelector("main")) {
+    mutationObserver.observe(document.querySelector("main"), {
       childList: true,
       subtree: true
     });
-  }
-  if (document.getElementById("permalink-overlay")) {
-    overlayMutationObserver.observe(
-      document.getElementById("permalink-overlay"),
-      {
-        childList: true,
-        subtree: true
-      }
-    );
   }
 }

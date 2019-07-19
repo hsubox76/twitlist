@@ -80,12 +80,12 @@ function updateInfoEl(containerEl, screenname) {
   }
 }
 
-function updateActionLink(containerEl, screenname, userId) {
+function updateActionLink(containerEl, screenname) {
   const actionLinkEl = getOrCreateChildWithClass(containerEl, "action-link", {
     tag: 'a',
     target: 'twitlisttab'
   });
-  let link = `${APP_URL}?screenname=${screenname}&tid=${userId}`;
+  let link = `${APP_URL}?screenname=${screenname}`;
   if (knownUsers[screenname]) {
     actionLinkEl.textContent = "view on twitlist";
     link += "&mode=edit";
@@ -105,6 +105,26 @@ function removeTweetUI() {
   }
 }
 
+function getTweetContentElement(tweetEl) {
+  const timeElement = tweetEl.querySelector('time');
+  if (!timeElement) return null;
+  const userInfoHeight = timeElement.parentElement.clientHeight;
+  let currentElement = timeElement.parentElement;
+  while (currentElement.parentElement && currentElement.parentElement !== tweetEl) {
+    currentElement = currentElement.parentElement;
+    // Keep going up a parent until the height significantly changes,
+    // indicating it now includes the tweet body.
+    // Use 1.9 to allow some space for emojis, verified icons, etc.
+    if (currentElement.clientHeight > userInfoHeight * 1.9) {
+      break;
+    }
+  }
+  if (currentElement && currentElement.children[1]) {
+    return currentElement.children[1];
+  }
+  return null;
+}
+
 function getOrCreateContainerEl(tweetEl) {
   let containerEl = null;
   const existingContainerEl = getChildWithClass(
@@ -114,7 +134,7 @@ function getOrCreateContainerEl(tweetEl) {
   if (existingContainerEl) {
     containerEl = existingContainerEl;
   } else {
-    const tweetTextEl = getChildWithClass(tweetEl, "js-tweet-text-container");
+    const tweetTextEl = getTweetContentElement(tweetEl);
     if (tweetTextEl && tweetTextEl.parentElement) {
       containerEl = buildElement({ className: "twitlist-ui-container" });
       tweetTextEl.parentElement.insertBefore(containerEl, tweetTextEl);
@@ -123,12 +143,30 @@ function getOrCreateContainerEl(tweetEl) {
   return containerEl;
 }
 
+function getScreennameEl(tweetEl) {
+  const linkEls = tweetEl.querySelectorAll('a');
+  for (const linkEl of linkEls) {
+    const hrefAttr = linkEl.getAttribute('href');
+    if (hrefAttr.match(/^\/([^\/]+)$/)) {
+      return linkEl;
+    }
+  }
+  // Didn't find a match?
+  return null;
+}
+
+function getScreennameFromTweetEl(tweetEl) {
+  const screennameEl = getScreennameEl(tweetEl);
+  if (!screennameEl) return null;
+  const hrefAttr = screennameEl.getAttribute('href');
+  return hrefAttr.slice(1);
+}
+
 function addTweetUI() {
   if (!user || !shouldShowUI) return;
-  const tweetEls = document.getElementsByClassName("tweet");
+  let tweetEls = document.querySelectorAll('article div[data-testid="tweet"]');
   for (const tweetEl of tweetEls) {
-    const userId = tweetEl.dataset.userId;
-    const screenname = tweetEl.dataset.screenName;
+    const screenname = getScreennameFromTweetEl(tweetEl);
     if (!screenname) continue;
     const screennameLower = screenname.toLowerCase();
     
@@ -147,7 +185,7 @@ function addTweetUI() {
       containerEl.innerHTML = '';
     }
     updateInfoEl(containerEl, screennameLower);
-    updateActionLink(containerEl, screennameLower, userId);
+    updateActionLink(containerEl, screennameLower);
   }
 }
 

@@ -17,7 +17,7 @@
   "content_scripts": [
     {
       "matches": ["http://www.twitter.com/*",
-                   "https://twitter.com/*"],
+                   "https://*.twitter.com/*"],
       "js": ["content.bundle.js"],
       "css": ["twitlist.css"],
       "run_at": "document_end"

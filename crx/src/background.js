@@ -63,7 +63,9 @@ function subscribeToList(uid) {
 function sendMessageToPage(message) {
   console.log('sending message to page', message);
   chrome.tabs.query({ url: ['https://*.twitter.com/*'] }, tabs => {
-    chrome.tabs.sendMessage(tabs[0].id, message);
+    tabs.forEach(tab => {
+      chrome.tabs.sendMessage(tab.id, message);
+    });
   });
 }
 

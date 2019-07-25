@@ -11,7 +11,8 @@
     "build": "webpack",
     "build:website": "webpack --config-name website",
     "build:crx": "webpack --config-name crx",
-    "start": "webpack-dev-server --config-name website"
+    "start": "webpack-dev-server --config-name website",
+    "zip": "zip -r twitlist_crx.zip crx/dist"
   },
   "dependencies": {
     "firebase": "^6.0.2"

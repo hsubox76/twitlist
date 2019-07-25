@@ -6,3 +6,5 @@ node_modules
 functions/constants.js
 firebase-debug.log
 .firebase
+
+*_crx.zip

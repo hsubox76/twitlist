@@ -1,5 +1,5 @@
 import { sendMessage } from "./util";
-import { ACTION } from '../../shared/constants';
+import { ACTION } from "../../shared/constants";
 
 let loginButton = document.getElementById("login-button");
 let loginText = document.getElementById("login-text");
@@ -23,15 +23,15 @@ function handleUserResponse(response) {
     loginText.textContent = `logged in as @${user.displayName}`;
     loginButton.removeEventListener("click", login);
     loginButton.addEventListener("click", logout);
-    loginButton.classList.remove('sign-in');
-    visibilitySection.setAttribute('style', 'display: block');
+    loginButton.classList.remove("sign-in");
+    visibilitySection.setAttribute("style", "display: block");
   } else {
     loginButton.textContent = "sign in with Twitter";
     loginText.textContent = `you are not logged in`;
     loginButton.removeEventListener("click", logout);
     loginButton.addEventListener("click", login);
-    loginButton.classList.add('sign-in');
-    visibilitySection.setAttribute('style', 'display: none');
+    loginButton.classList.add("sign-in");
+    visibilitySection.setAttribute("style", "display: none");
   }
 }
 
@@ -45,7 +45,7 @@ function toggleVisibilityText(response) {
 
 function toggleUI() {
   sendMessage({ action: ACTION.BG.TOGGLE_UI });
-    // .then(toggleVisibilityText);
+  // .then(toggleVisibilityText);
 }
 sendMessage({ action: ACTION.BG.GET_UI_VISIBILITY }).then(toggleVisibilityText);
 visibilityCheckbox.addEventListener("change", toggleUI);

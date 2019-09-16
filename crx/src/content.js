@@ -1,5 +1,5 @@
 import { sendMessage } from "./util";
-import { ACTION, APP_URL } from '../../shared/constants';
+import { ACTION, APP_URL } from "../../shared/constants";
 import {
   deleteElement,
   buildElement,
@@ -17,7 +17,7 @@ let shouldShowUI = true;
 
 // Listens for messages from background.js
 chrome.runtime.onMessage.addListener(request => {
-  console.log('Request received:', request);
+  console.log("Request received:", request);
   if (request.action === ACTION.PAGE.HIDE_LIST) {
     removeTweetUI();
     shouldShowUI = false;
@@ -45,18 +45,17 @@ chrome.runtime.onMessage.addListener(request => {
 
 // TODO: Unsubscribe etc. on disconnect!
 // chrome.runtime.connect().onDisconnect.addListener(function() {
-  // clean up when content script gets disconnected
+// clean up when content script gets disconnected
 // })
 
 // Asks background process for current user.  If user is found,
 // asks background process to fetch user's list.
-sendMessage({ action: ACTION.BG.GET_USER })
-  .then(response => {
-    if (response.user) {
-      user = response.user;
-      return sendMessage({ action: ACTION.BG.GET_LIST, uid: response.user.uid });
-    }
-  });
+sendMessage({ action: ACTION.BG.GET_USER }).then(response => {
+  if (response.user) {
+    user = response.user;
+    return sendMessage({ action: ACTION.BG.GET_LIST, uid: response.user.uid });
+  }
+});
 
 function updateInfoEl(containerEl, screenname) {
   if (knownUsers[screenname]) {
@@ -70,7 +69,7 @@ function updateInfoEl(containerEl, screenname) {
     );
     // If element exists but content has changed.
     infoEl.textContent = knownUsers[screenname].description;
-    infoEl.setAttribute('title', knownUsers[screenname].description);
+    infoEl.setAttribute("title", knownUsers[screenname].description);
   } else {
     const existingInfoEl = getChildWithClass(
       containerEl,
@@ -82,8 +81,8 @@ function updateInfoEl(containerEl, screenname) {
 
 function updateActionLink(containerEl, screenname) {
   const actionLinkEl = getOrCreateChildWithClass(containerEl, "action-link", {
-    tag: 'a',
-    target: 'twitlisttab'
+    tag: "a",
+    target: "twitlisttab"
   });
   let link = `${APP_URL}?screenname=${screenname}`;
   if (knownUsers[screenname]) {
@@ -97,7 +96,9 @@ function updateActionLink(containerEl, screenname) {
 }
 
 function removeTweetUI() {
-  const containerSelect = document.getElementsByClassName("twitlist-ui-container");
+  const containerSelect = document.getElementsByClassName(
+    "twitlist-ui-container"
+  );
   const containerEls = Array.prototype.slice.call(containerSelect);
   for (const containerEl of containerEls) {
     containerEl.innerHTML = "";
@@ -106,11 +107,14 @@ function removeTweetUI() {
 }
 
 function getTweetContentElement(tweetEl) {
-  const timeElement = tweetEl.querySelector('time');
+  const timeElement = tweetEl.querySelector("time");
   if (!timeElement) return null;
   const userInfoHeight = timeElement.parentElement.clientHeight;
   let currentElement = timeElement.parentElement;
-  while (currentElement.parentElement && currentElement.parentElement !== tweetEl) {
+  while (
+    currentElement.parentElement &&
+    currentElement.parentElement !== tweetEl
+  ) {
     currentElement = currentElement.parentElement;
     // Keep going up a parent until the height significantly changes,
     // indicating it now includes the tweet body.
@@ -144,9 +148,9 @@ function getOrCreateContainerEl(tweetEl) {
 }
 
 function getScreennameEl(tweetEl) {
-  const linkEls = tweetEl.querySelectorAll('a');
+  const linkEls = tweetEl.querySelectorAll("a");
   for (const linkEl of linkEls) {
-    const hrefAttr = linkEl.getAttribute('href');
+    const hrefAttr = linkEl.getAttribute("href");
     if (hrefAttr.match(/^\/([^\/]+)$/)) {
       return linkEl;
     }
@@ -158,7 +162,7 @@ function getScreennameEl(tweetEl) {
 function getScreennameFromTweetEl(tweetEl) {
   const screennameEl = getScreennameEl(tweetEl);
   if (!screennameEl) return null;
-  const hrefAttr = screennameEl.getAttribute('href');
+  const hrefAttr = screennameEl.getAttribute("href");
   return hrefAttr.slice(1);
 }
 
@@ -169,7 +173,7 @@ function addTweetUI() {
     const screenname = getScreennameFromTweetEl(tweetEl);
     if (!screenname) continue;
     const screennameLower = screenname.toLowerCase();
-    
+
     // User doesn't need to add notes to themselves.
     if (screennameLower === user.displayName) continue;
 
@@ -182,7 +186,7 @@ function addTweetUI() {
     );
     if (!existingInfoEl) {
       // clear it out if it only had an action link.
-      containerEl.innerHTML = '';
+      containerEl.innerHTML = "";
     }
     updateInfoEl(containerEl, screennameLower);
     updateActionLink(containerEl, screennameLower);

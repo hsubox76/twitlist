@@ -2,7 +2,7 @@ import { sortList } from "../helpers";
 import { renderTableContainer } from "./table-custom";
 import { appendNewElement } from "../../../shared/dom-utils";
 import { updateNote } from "../db";
-import { VISIBILITY } from '../../../shared/constants';
+import { VISIBILITY } from "../../../shared/constants";
 
 export function renderList(
   { user, list, listProperties, listSortBy, listSortDirection },
@@ -71,22 +71,22 @@ export function renderList(
       onChange: onVisibilityToggle
     });
     appendNewElement(visibilitySelect, {
-      tag: 'option',
-      text: 'just you',
+      tag: "option",
+      text: "just you",
       selected: note.visibility === VISIBILITY.PRIVATE,
       value: VISIBILITY.PRIVATE
     });
-    if (listProperties.visibility === 'public') {
+    if (listProperties.visibility === "public") {
       appendNewElement(visibilitySelect, {
-        tag: 'option',
-        text: 'everyone',
+        tag: "option",
+        text: "everyone",
         selected: note.visibility === VISIBILITY.SHARED,
         value: VISIBILITY.SHARED
       });
-    } else if (listProperties.visibility === 'shared') {
+    } else if (listProperties.visibility === "shared") {
       appendNewElement(visibilitySelect, {
-        tag: 'option',
-        text: 'your shared list (below)',
+        tag: "option",
+        text: "your shared list (below)",
         selected: note.visibility === VISIBILITY.SHARED,
         value: VISIBILITY.SHARED
       });

@@ -1,5 +1,5 @@
 import { firebaseConfig } from "../../shared/firebase-config";
-import { ACTION, COLL } from '../../shared/constants';
+import { ACTION, COLL } from "../../shared/constants";
 
 firebase.initializeApp(firebaseConfig);
 
@@ -11,7 +11,7 @@ let unsubscribe = null;
 firebase.auth().onAuthStateChanged(function(fetchedUser) {
   if (fetchedUser) {
     user = fetchedUser;
-  } else {;
+  } else {
     unsubscribe && unsubscribe();
     unsubscribe = null;
   }
@@ -55,14 +55,14 @@ function subscribeToList(uid) {
           knownUsers
         });
       } else {
-        console.error('Could not get list data.');
+        console.error("Could not get list data.");
       }
     });
 }
 
 function sendMessageToPage(message) {
-  console.log('sending message to page', message);
-  chrome.tabs.query({ url: ['https://*.twitter.com/*'] }, tabs => {
+  console.log("sending message to page", message);
+  chrome.tabs.query({ url: ["https://*.twitter.com/*"] }, tabs => {
     tabs.forEach(tab => {
       chrome.tabs.sendMessage(tab.id, message);
     });
@@ -73,7 +73,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log("got request", request);
   switch (request.action) {
     case ACTION.BG.GET_UI_VISIBILITY:
-      console.log('sending', isUIVisible);
+      console.log("sending", isUIVisible);
       sendResponse({ isUIVisible });
       break;
     case ACTION.BG.TOGGLE_UI:

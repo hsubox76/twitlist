@@ -78,18 +78,6 @@ export function appendNewElement(parent, options) {
   return element;
 }
 
-export function setTextContentForId(id, text) {
-  const element = document.getElementById(id);
-  if (!element) throw new Error('Could not find element with id ' + id);
-  element.textContent = text;
-}
-
-export function getValueAtId(id) {
-  const element = document.getElementById(id);
-  if (!element) throw new Error('Could not find element with id ' + id);
-  return element.value;
-}
-
 export function getParams() {
   const queryString = window.location.search;
   if (!queryString) return {};

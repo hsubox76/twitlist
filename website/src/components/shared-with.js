@@ -1,11 +1,11 @@
 import { renderTableContainer } from "./table-custom";
 import { appendNewElement } from "../../../shared/dom-utils";
 import { addSharee, removeSharee, updateListProperties } from "../db";
-import { VISIBILITY } from '../../../shared/constants';
+import { VISIBILITY } from "../../../shared/constants";
 
 export function renderSharedWith(
   { user, listProperties },
-  parent, 
+  parent,
   { refreshList }
 ) {
   function onSubmitSharee(e) {
@@ -14,15 +14,14 @@ export function renderSharedWith(
     const screenname = formData.get("add-sharee-screenname");
     const inputEl = document.getElementById("add-sharee-screenname");
     const buttonEl = document.getElementById("add-sharee-button");
-    inputEl.setAttribute('disabled', true);
-    buttonEl.setAttribute('disabled', true);
-    e.target.classList.add('disabled');
+    inputEl.setAttribute("disabled", true);
+    buttonEl.setAttribute("disabled", true);
+    e.target.classList.add("disabled");
     // TODO: Validate screenname more carefully.
     if (screenname) {
-      addSharee(user.uid, screenname)
-        .then(() => {
-          refreshList();
-        });
+      addSharee(user.uid, screenname).then(() => {
+        refreshList();
+      });
     }
   }
   function onUnshareClick(e) {
@@ -33,19 +32,20 @@ export function renderSharedWith(
     if (screenname) {
       removeSharee(user.uid, screenname, uid).then(() => {
         refreshList();
-      })
+      });
     }
   }
   function onVisibilityToggle(e) {
-    updateListProperties(user.uid, { visibility: e.target.value })
-      .then(() => refreshList());
+    updateListProperties(user.uid, { visibility: e.target.value }).then(() =>
+      refreshList()
+    );
   }
   const { container, table } = renderTableContainer(
     parent,
     "shared-with",
     "This list can be seen by"
   );
-  const tableHeader = container.getElementsByTagName('h2')[0];
+  const tableHeader = container.getElementsByTagName("h2")[0];
   const visibilitySelect = appendNewElement(tableHeader, {
     tag: "select",
     className: "visibility-select",
@@ -53,20 +53,20 @@ export function renderSharedWith(
     onChange: onVisibilityToggle
   });
   appendNewElement(visibilitySelect, {
-    tag: 'option',
-    text: 'nobody',
+    tag: "option",
+    text: "nobody",
     selected: listProperties.visibility === VISIBILITY.PRIVATE,
     value: VISIBILITY.PRIVATE
   });
   appendNewElement(visibilitySelect, {
-    tag: 'option',
-    text: 'certain users (listed below)',
+    tag: "option",
+    text: "certain users (listed below)",
     selected: listProperties.visibility === VISIBILITY.SHARED,
     value: VISIBILITY.SHARED
   });
   appendNewElement(visibilitySelect, {
-    tag: 'option',
-    text: 'everyone',
+    tag: "option",
+    text: "everyone",
     selected: listProperties.visibility === VISIBILITY.PUBLIC,
     value: VISIBILITY.PUBLIC
   });
@@ -93,7 +93,10 @@ export function renderSharedWith(
     id: "add-sharee-button",
     text: "share"
   });
-  if (!listProperties.sharedWithScreennames || listProperties.sharedWithScreennames.size === 0) {
+  if (
+    !listProperties.sharedWithScreennames ||
+    listProperties.sharedWithScreennames.size === 0
+  ) {
     appendNewElement(table, {
       className: "empty-list-message",
       text: "You are not sharing this list with anyone."
@@ -114,10 +117,10 @@ export function renderSharedWith(
       target: "_blank",
       text: `@${screenname}`
     });
-    const shareeUid = listProperties.sharedWithScreennames[screenname]
+    const shareeUid = listProperties.sharedWithScreennames[screenname];
     appendNewElement(userRow, {
       className: "registered-cell",
-      text: (shareeUid === '_' ? 'not registered' : 'registered')
+      text: shareeUid === "_" ? "not registered" : "registered"
     });
     const editCell = appendNewElement(userRow, { className: "edit-cell" });
     appendNewElement(editCell, {
@@ -125,7 +128,7 @@ export function renderSharedWith(
       onClick: onUnshareClick,
       data: {
         screenname: screenname,
-        uid: shareeUid === '_' ? null : shareeUid
+        uid: shareeUid === "_" ? null : shareeUid
       },
       text: "unshare"
     });

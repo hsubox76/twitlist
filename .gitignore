@@ -3,7 +3,6 @@
 dist/
 node_modules
 
-functions/constants.js
 firebase-debug.log
 .firebase
 

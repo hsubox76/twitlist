@@ -1,11 +1,8 @@
 import { renderTableContainer } from "./table-custom";
 import { appendNewElement } from "../../../shared/dom-utils";
-import { VISIBILITY } from '../../../shared/constants';
+import { VISIBILITY } from "../../../shared/constants";
 
-export function renderOtherLists(
-  { otherLists, publicOtherLists },
-  parent
-) {
+export function renderOtherLists({ otherLists, publicOtherLists }, parent) {
   const { table } = renderTableContainer(
     parent,
     "other-lists",
@@ -39,7 +36,8 @@ export function renderOtherLists(
     });
     appendNewElement(userRow, {
       className: "visibility-cell",
-      text: list.visibility === VISIBILITY.PUBLIC ? '(shared with everyone)' : ''
+      text:
+        list.visibility === VISIBILITY.PUBLIC ? "(shared with everyone)" : ""
     });
   }
 }

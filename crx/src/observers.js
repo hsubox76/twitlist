@@ -21,10 +21,10 @@ export function disconnectMutationObservers() {
 export function createMutationObservers(updateFn) {
   // When tweets are added to UI (by scrolling, etc.)
   mutationObserver = createMutationObserver(updateFn);
-  
+
   // When permalink overlay is turned on or off.
   overlayMutationObserver = createMutationObserver(updateFn);
-  
+
   // When page changes (navigation within SPA)
   bodyMutationObserver = createMutationObserver(updateFn);
 }

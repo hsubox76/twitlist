@@ -6,28 +6,30 @@ const provider = new firebase.auth.TwitterAuthProvider();
 
 export function renderHeader({ user, params, listUnsub }, parent, renderer) {
   function login() {
-    return firebase.auth().signInWithPopup(provider)
-    .then(credential => {
-      if (credential.user) {
-        // Get screenname if new user and set it as profile displayname
-        if (credential.additionalUserInfo) {
-          let screenName =
-            credential.additionalUserInfo.profile["screen_name"];
-          screenName = screenName.toLowerCase();
-          if (screenName && credential.user.displayName !== screenName) {
-            credential.user
-              .updateProfile({
-                displayName: screenName
-              })
-              .then(() => renderer.setState({ user: credential.user }));
-          } else {
-            renderer.setState({ user: credential.user });
+    return firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then(credential => {
+        if (credential.user) {
+          // Get screenname if new user and set it as profile displayname
+          if (credential.additionalUserInfo) {
+            let screenName =
+              credential.additionalUserInfo.profile["screen_name"];
+            screenName = screenName.toLowerCase();
+            if (screenName && credential.user.displayName !== screenName) {
+              credential.user
+                .updateProfile({
+                  displayName: screenName
+                })
+                .then(() => renderer.setState({ user: credential.user }));
+            } else {
+              renderer.setState({ user: credential.user });
+            }
           }
+        } else {
+          // TODO: log error
         }
-      } else {
-        // TODO: log error
-      }
-    });
+      });
   }
 
   function logout() {
@@ -46,7 +48,7 @@ export function renderHeader({ user, params, listUnsub }, parent, renderer) {
     className: "left-container"
   });
   appendNewElement(leftContainer, {
-    tag: 'a',
+    tag: "a",
     className: "title",
     text: "twitlist",
     onClick: e => {
@@ -54,7 +56,9 @@ export function renderHeader({ user, params, listUnsub }, parent, renderer) {
       renderer.setState({ params: {} });
     }
   });
-  const pageTitle = params.listname ? `@${params.listname}'s list` : 'your list';
+  const pageTitle = params.listname
+    ? `@${params.listname}'s list`
+    : "your list";
   appendNewElement(leftContainer, { className: "subtitle", text: pageTitle });
   const loginContainer = appendNewElement(headerContainer, {
     className: "login-container"

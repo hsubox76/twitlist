@@ -7,7 +7,6 @@ export function renderOtherList(
   parent,
   { onSortClick }
 ) {
-
   const sortedList = sortList(list, listSortBy, listSortDirection);
   const { container, table } = renderTableContainer(
     parent,

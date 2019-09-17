@@ -1,4 +1,4 @@
-import { COLL, VISIBILITY } from '../functions/constants';
+const { COLL, VISIBILITY } = require('../functions/constants');
 
 const ACTION = {
   BG: {

@@ -23,7 +23,8 @@ function init() {
     listProperties: {},
     listSortBy: "screenname",
     listSortDirection: 1,
-    params: getParams()
+    params: getParams(),
+    error: null
   });
 
   renderer.subscribe(renderHeader);
@@ -41,8 +42,7 @@ function init() {
           error
         }) {
           if (error && error === "permissions") {
-            // TODO: show error in UI
-            console.log(`you don't have permission to view this list`);
+            renderer.setState({ error: `you don't have permission to view this list` });
           }
           renderer.setState({ list, listProperties });
         });
@@ -80,8 +80,7 @@ function init() {
           error
         }) {
           if (error && error === "permissions") {
-            // TODO: show error in UI
-            console.log(`you don't have permission to view this list`);
+            renderer.setState({ error: `you don't have permission to view this list` });
           }
           renderer.setState({ list, listProperties });
         });

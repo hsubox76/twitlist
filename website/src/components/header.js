@@ -54,9 +54,9 @@ export function renderHeader({ user, listProperties, listUnsub }, parent, render
     text: "twitlist"
   });
   let pageTitle = '';
-  if (user && user.displayName === listProperties.creatorScreenname) {
+  if (user && listProperties && user.displayName === listProperties.creatorScreenname) {
     pageTitle = 'your list';
-  } else if (listProperties.creatorScreenname) {
+  } else if (listProperties && listProperties.creatorScreenname) {
     pageTitle = `@${listProperties.creatorScreenname}'s list`;
   } else if (user) {
     pageTitle = 'loading list';

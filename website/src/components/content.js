@@ -90,6 +90,7 @@ export function renderContent(state, parent, renderer, oldState) {
     id: "content-container"
   });
   state.isLoading && renderLoader(state, contentContainer);
+  !state.isLoading && state.error && renderError(state, contentContainer);
   if (!state.list) return;
   state.user && renderAddForm(state, contentContainer, { onPostClick, onCancelClick });
   if (state.params.listid) {
@@ -113,4 +114,12 @@ function renderLoader(state, parent) {
     id: "content-loading-container"
   });
   appendNewElement(loadingContainer, { className: "spinner" });
+}
+
+function renderError(state, parent) {
+  appendNewElement(parent, {
+    className: "container",
+    id: "error-container",
+    text: state.error
+  });
 }

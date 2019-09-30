@@ -10,7 +10,6 @@ function postNoteFromForm(formData, { user, params }, renderer) {
   if (!user.uid) return;
   const description = formData.get("user-description");
   const screenname = formData.get("user-screen-name");
-  const twitterId = formData.get("user-twitter-id");
   if (!description || !screenname) return;
 
   // Disable buttons.
@@ -23,8 +22,7 @@ function postNoteFromForm(formData, { user, params }, renderer) {
     user.uid,
     screenname.toLowerCase(),
     {
-      description,
-      twitterId
+      description
     },
     /* isNew */ params && params.mode === "add"
   )

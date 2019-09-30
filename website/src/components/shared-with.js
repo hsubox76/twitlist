@@ -71,6 +71,17 @@ export function renderSharedWith(
     value: VISIBILITY.PUBLIC
   });
   if (listProperties.visibility !== VISIBILITY.SHARED) {
+    const publicLinkContainer = appendNewElement(container, {
+      className: "public-link-container"
+    });
+    appendNewElement(publicLinkContainer, {
+      text: "Public link where others can view:"
+    });
+    appendNewElement(publicLinkContainer, {
+      tag: "a",
+      text: `https://twitlist.net/${user.uid}`,
+      href: `https://twitlist.net/${user.uid}`
+    });
     return;
   }
   const addShareeForm = appendNewElement(container, {

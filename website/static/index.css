@@ -182,6 +182,15 @@ textarea, input {
   font-size: 0.9rem;
 }
 
+.public-link-container {
+  margin: 10px;
+  display: flex;
+}
+
+.public-link-container a {
+  margin-left: 10px;
+}
+
 #add-sharee-form {
   display: flex;
   margin: 10px;

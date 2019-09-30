@@ -9,16 +9,17 @@ export function renderList(
   parent,
   { onSortClick, onEditClick }
 ) {
-  function onVisibilityToggle(e) {
-    e.preventDefault();
-    const data = e.target.closest(".user-row").dataset;
-    updateNote(
-      user.uid,
-      data.screenname,
-      { visibility: e.target.value },
-      /* isNew */ false
-    );
-  }
+  // TODO: Individual visibility toggles.
+  // function onVisibilityToggle(e) {
+  //   e.preventDefault();
+  //   const data = e.target.closest(".user-row").dataset;
+  //   updateNote(
+  //     user.uid,
+  //     data.screenname,
+  //     { visibility: e.target.value },
+  //     /* isNew */ false
+  //   );
+  // }
 
   const sortedList = sortList(list, listSortBy, listSortDirection);
   const { container, table } = renderTableContainer(
@@ -43,13 +44,12 @@ export function renderList(
     onClick: onSortClick
   });
   appendNewElement(headerRow, { text: "Your Note" });
-  appendNewElement(headerRow, { text: "Visible To" });
+  // appendNewElement(headerRow, { text: "Visible To" });
   for (const note of sortedList) {
     const userRow = appendNewElement(table, {
       className: "user-row",
       data: {
-        screenname: note.screenname,
-        tid: note.twitterId
+        screenname: note.screenname
       }
     });
     const usernameCell = appendNewElement(userRow, {
@@ -62,40 +62,40 @@ export function renderList(
       text: `@${note.screenname}`
     });
     appendNewElement(userRow, { text: note.description });
-    const visibilityCell = appendNewElement(userRow, {
-      className: "visibility-cell"
-    });
-    const visibilitySelect = appendNewElement(visibilityCell, {
-      tag: "select",
-      value: note.visibility,
-      onChange: onVisibilityToggle
-    });
-    appendNewElement(visibilitySelect, {
-      tag: "option",
-      text: "just you",
-      selected: note.visibility === VISIBILITY.PRIVATE,
-      value: VISIBILITY.PRIVATE
-    });
-    if (listProperties.visibility === "public") {
-      appendNewElement(visibilitySelect, {
-        tag: "option",
-        text: "everyone",
-        selected: note.visibility === VISIBILITY.SHARED,
-        value: VISIBILITY.SHARED
-      });
-    } else if (listProperties.visibility === "shared") {
-      appendNewElement(visibilitySelect, {
-        tag: "option",
-        text: "your shared list (below)",
-        selected: note.visibility === VISIBILITY.SHARED,
-        value: VISIBILITY.SHARED
-      });
-    }
+    // const visibilityCell = appendNewElement(userRow, {
+    //   className: "visibility-cell"
+    // });
+    // const visibilitySelect = appendNewElement(visibilityCell, {
+    //   tag: "select",
+    //   value: note.visibility,
+    //   onChange: onVisibilityToggle
+    // });
+    // appendNewElement(visibilitySelect, {
+    //   tag: "option",
+    //   text: "just you",
+    //   selected: note.visibility === VISIBILITY.PRIVATE,
+    //   value: VISIBILITY.PRIVATE
+    // });
+    // if (listProperties.visibility === "public") {
+    //   appendNewElement(visibilitySelect, {
+    //     tag: "option",
+    //     text: "everyone",
+    //     selected: note.visibility === VISIBILITY.SHARED,
+    //     value: VISIBILITY.SHARED
+    //   });
+    // } else if (listProperties.visibility === "shared") {
+    //   appendNewElement(visibilitySelect, {
+    //     tag: "option",
+    //     text: "your shared list (below)",
+    //     selected: note.visibility === VISIBILITY.SHARED,
+    //     value: VISIBILITY.SHARED
+    //   });
+    // }
     const editCell = appendNewElement(userRow, { className: "edit-cell" });
     appendNewElement(editCell, {
       tag: "a",
       onClick: onEditClick,
-      href: `/?screenname=${note.screenname}&tid=${note.twitterId}&mode=edit`,
+      href: `/?screenname=${note.screenname}&mode=edit`,
       text: "edit"
     });
   }

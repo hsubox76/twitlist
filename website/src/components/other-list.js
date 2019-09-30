@@ -34,8 +34,7 @@ export function renderOtherList(
     const userRow = appendNewElement(table, {
       className: "user-row",
       data: {
-        screenname: user.screenname,
-        tid: user.twitterId
+        screenname: user.screenname
       }
     });
     const usernameCell = appendNewElement(userRow, {

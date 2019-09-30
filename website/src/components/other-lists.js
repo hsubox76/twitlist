@@ -31,7 +31,7 @@ export function renderOtherLists({ otherLists, publicOtherLists }, parent) {
     appendNewElement(usernameCell, {
       tag: "a",
       // TODO: link to view list
-      href: `/?listid=${list.creatorUid}&listname=${list.creatorScreenname}`,
+      href: `/?listid=${list.creatorUid}`,
       text: `@${list.creatorScreenname}`
     });
     appendNewElement(userRow, {

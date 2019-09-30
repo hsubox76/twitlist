@@ -66,7 +66,7 @@ export async function getGuestList(uid, listUid) {
   let notes;
   if (properties.visibility === VISIBILITY.PUBLIC) {
     notes = await getListNotes(listUid);
-  } else if (properties.visibility === VISIBILITY.SHARED && properties.sharedWith.includes(uid)) {
+  } else if (properties.visibility === VISIBILITY.SHARED && uid && properties.sharedWith.includes(uid)) {
     notes = await getListNotes(listUid, initialQuery => {
       return initialQuery.where("visibility", "==", VISIBILITY.SHARED);
     });
@@ -99,7 +99,6 @@ export function updateListProperties(uid, updates) {
 
 export function getListNotes(uid, filterFn) {
   let getNotesQuery = getRef(`${COLL.LISTS}/${uid}/${COLL.NOTES}`);
-  console.log('getnotesquery', getNotesQuery);
   if (filterFn) {
     getNotesQuery = filterFn(getNotesQuery);
   }

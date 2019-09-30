@@ -3,7 +3,7 @@ import { renderTableContainer } from "./table-custom";
 import { appendNewElement } from "../../../shared/dom-utils";
 
 export function renderOtherList(
-  { params, list, listSortBy, listSortDirection },
+  { list, listProperties, listSortBy, listSortDirection },
   parent,
   { onSortClick }
 ) {
@@ -11,7 +11,7 @@ export function renderOtherList(
   const { container, table } = renderTableContainer(
     parent,
     "user-list",
-    `@${params.listname}'s list`
+    listProperties.creatorScreenname ? `@${listProperties.creatorScreenname}'s list` : ''
   );
   if (!list.length) {
     appendNewElement(container, {

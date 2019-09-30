@@ -79,8 +79,8 @@ export function renderSharedWith(
     });
     appendNewElement(publicLinkContainer, {
       tag: "a",
-      text: `https://twitlist.net/${user.uid}`,
-      href: `https://twitlist.net/${user.uid}`
+      text: `https://twitlist.net/?listid=${user.uid}`,
+      href: `https://twitlist.net/?listid=${user.uid}`
     });
     return;
   }

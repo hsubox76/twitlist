@@ -90,20 +90,20 @@ export function renderContent(state, parent, renderer, oldState) {
     id: "content-container"
   });
   state.isLoading && renderLoader(state, contentContainer);
-  if (!state.user || !state.list) return;
-  renderAddForm(state, contentContainer, { onPostClick, onCancelClick });
+  if (!state.list) return;
+  state.user && renderAddForm(state, contentContainer, { onPostClick, onCancelClick });
   if (state.params.listid) {
     renderOtherList(state, contentContainer, {
       onSortClick
     });
-  } else {
+  } else if (state.user) {
     renderList(state, contentContainer, {
       onEditClick,
       onSortClick
     });
     renderSharedWith(state, contentContainer, { refreshList });
   }
-  renderOtherLists(state, contentContainer, { setParams });
+  state.user && renderOtherLists(state, contentContainer, { setParams });
 }
 
 function renderLoader(state, parent) {

@@ -73,6 +73,18 @@ function init() {
       const { params } = renderer.getState();
       if (params.mode === "edit" || params.mode === "add") {
         firebase.auth().signInWithPopup(provider);
+      } else if (params.listid) {
+        getGuestList(undefined, params.listid).then(function({
+          list,
+          listProperties,
+          error
+        }) {
+          if (error && error === "permissions") {
+            // TODO: show error in UI
+            console.log(`you don't have permission to view this list`);
+          }
+          renderer.setState({ list, listProperties });
+        });
       }
     }
     renderer.setState({ isLoading: false });

@@ -11,7 +11,9 @@ export function renderOtherList(
   const { container, table } = renderTableContainer(
     parent,
     "user-list",
-    listProperties && listProperties.creatorScreenname ? `@${listProperties.creatorScreenname}'s list` : ''
+    listProperties && listProperties.creatorScreenname
+      ? `@${listProperties.creatorScreenname}'s list`
+      : ""
   );
   if (!list.length) {
     appendNewElement(container, {

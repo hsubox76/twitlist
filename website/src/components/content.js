@@ -92,7 +92,8 @@ export function renderContent(state, parent, renderer, oldState) {
   state.isLoading && renderLoader(state, contentContainer);
   !state.isLoading && state.error && renderError(state, contentContainer);
   if (!state.list) return;
-  state.user && renderAddForm(state, contentContainer, { onPostClick, onCancelClick });
+  state.user &&
+    renderAddForm(state, contentContainer, { onPostClick, onCancelClick });
   if (state.params.listid) {
     renderOtherList(state, contentContainer, {
       onSortClick

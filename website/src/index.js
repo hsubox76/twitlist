@@ -42,7 +42,9 @@ function init() {
           error
         }) {
           if (error && error === "permissions") {
-            renderer.setState({ error: `you don't have permission to view this list` });
+            renderer.setState({
+              error: `you don't have permission to view this list`
+            });
           }
           renderer.setState({ list, listProperties });
         });
@@ -80,7 +82,9 @@ function init() {
           error
         }) {
           if (error && error === "permissions") {
-            renderer.setState({ error: `you don't have permission to view this list` });
+            renderer.setState({
+              error: `you don't have permission to view this list`
+            });
           }
           renderer.setState({ list, listProperties });
         });

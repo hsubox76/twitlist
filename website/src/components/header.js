@@ -4,7 +4,11 @@ import { appendNewElement } from "../../../shared/dom-utils";
 
 const provider = new firebase.auth.TwitterAuthProvider();
 
-export function renderHeader({ user, listProperties, listUnsub }, parent, renderer) {
+export function renderHeader(
+  { user, listProperties, listUnsub },
+  parent,
+  renderer
+) {
   function login() {
     return firebase
       .auth()
@@ -53,13 +57,17 @@ export function renderHeader({ user, listProperties, listUnsub }, parent, render
     className: "title",
     text: "twitlist"
   });
-  let pageTitle = '';
-  if (user && listProperties && user.displayName === listProperties.creatorScreenname) {
-    pageTitle = 'your list';
+  let pageTitle = "";
+  if (
+    user &&
+    listProperties &&
+    user.displayName === listProperties.creatorScreenname
+  ) {
+    pageTitle = "your list";
   } else if (listProperties && listProperties.creatorScreenname) {
     pageTitle = `@${listProperties.creatorScreenname}'s list`;
   } else if (user) {
-    pageTitle = 'loading list';
+    pageTitle = "loading list";
   }
   appendNewElement(leftContainer, { className: "subtitle", text: pageTitle });
   const loginContainer = appendNewElement(headerContainer, {

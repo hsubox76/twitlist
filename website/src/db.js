@@ -71,9 +71,11 @@ export async function getGuestList(uid, listUid) {
     uid &&
     properties.sharedWith.includes(uid)
   ) {
-    notes = await getListNotes(listUid, initialQuery => {
-      return initialQuery.where("visibility", "==", VISIBILITY.SHARED);
-    });
+    notes = await getListNotes(listUid);
+    // TODO: Put this back if we restore individual note visibility
+    // notes = await getListNotes(listUid, initialQuery => {
+    //   return initialQuery.where("visibility", "==", VISIBILITY.SHARED);
+    // });
   }
   return { list: notes || [], listProperties: properties };
 }

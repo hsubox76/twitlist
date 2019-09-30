@@ -16,7 +16,7 @@ const ACTION = {
   }
 };
 
-const APP_URL = 'https://twitlist-939a3.firebaseapp.com';
+const APP_URL = 'https://twitlist.net';
 
 module.exports = {
   COLL,

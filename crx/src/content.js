@@ -14,6 +14,7 @@ import {
 let knownUsers = {};
 let user = null;
 let shouldShowUI = true;
+let isDarkTheme = false;
 
 // Listens for messages from background.js
 chrome.runtime.onMessage.addListener(request => {
@@ -131,6 +132,10 @@ function getTweetContentElement(tweetEl) {
 
 function getOrCreateContainerEl(tweetEl) {
   let containerEl = null;
+  let containerClass = "twitlist-ui-container";
+  if (isDarkTheme) {
+    containerClass += ' twitlist-ui-container-dark';
+  }
   const existingContainerEl = getChildWithClass(
     tweetEl,
     "twitlist-ui-container"
@@ -140,7 +145,7 @@ function getOrCreateContainerEl(tweetEl) {
   } else {
     const tweetTextEl = getTweetContentElement(tweetEl);
     if (tweetTextEl && tweetTextEl.parentElement) {
-      containerEl = buildElement({ className: "twitlist-ui-container" });
+      containerEl = buildElement({ className: containerClass });
       tweetTextEl.parentElement.insertBefore(containerEl, tweetTextEl);
     }
   }
@@ -169,6 +174,13 @@ function getScreennameFromTweetEl(tweetEl) {
 function addTweetUI() {
   if (!user || !shouldShowUI) return;
   let tweetEls = document.querySelectorAll('article div[data-testid="tweet"]');
+  const themeMeta = document.head.querySelector('meta[name="theme-color"]');
+  const theme = themeMeta ? themeMeta.content : '';
+  if (theme === '#FFFFFF') {
+    isDarkTheme = false;
+  } else {
+    isDarkTheme = true;
+  }
   for (const tweetEl of tweetEls) {
     const screenname = getScreennameFromTweetEl(tweetEl);
     if (!screenname) continue;

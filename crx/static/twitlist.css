@@ -8,6 +8,10 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.twitlist-ui-container.twitlist-ui-container-dark {
+  color: #fff;
+}
+
 .twitlist-info-container {
   font-style: italic;
   white-space: nowrap;

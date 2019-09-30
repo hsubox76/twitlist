@@ -1,6 +1,6 @@
 const observers = [];
 
-let mutationObserver, overlayMutationObserver, bodyMutationObserver;
+let mutationObserver, titleMutationObserver, bodyMutationObserver;
 
 function createMutationObserver(updateFn) {
   const observer = new MutationObserver(function() {
@@ -23,7 +23,7 @@ export function createMutationObservers(updateFn) {
   mutationObserver = createMutationObserver(updateFn);
 
   // When permalink overlay is turned on or off.
-  overlayMutationObserver = createMutationObserver(updateFn);
+  titleMutationObserver = createMutationObserver(updateFn);
 
   // When page changes (navigation within SPA)
   bodyMutationObserver = createMutationObserver(updateFn);
@@ -32,12 +32,18 @@ export function createMutationObservers(updateFn) {
 export function startMutationObservers() {
   if (document.body) {
     bodyMutationObserver.observe(document.body, {
-      attributeFilter: ["class"]
+      attributeFilter: ["class", "style"]
     });
   }
   if (document.querySelector("main")) {
     mutationObserver.observe(document.querySelector("main"), {
       childList: true,
+      subtree: true
+    });
+  }
+  if (document.querySelector("title")) {
+    titleMutationObserver.observe(document.querySelector("title"), {
+      characterData: true,
       subtree: true
     });
   }

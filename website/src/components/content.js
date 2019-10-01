@@ -87,25 +87,43 @@ export function renderContent(state, parent, renderer, oldState) {
   }
 
   const contentContainer = appendNewElement(parent, {
-    id: "content-container"
+    id: "content-container",
+    className: "container"
   });
-  state.isLoading && renderLoader(state, contentContainer);
-  !state.isLoading && state.error && renderError(state, contentContainer);
+  if (state.isLoading) {
+    // Only render loader.
+    renderLoader(state, contentContainer);
+    return;
+  }
+  if (state.error) {
+    // May render other content below error.
+    renderError(state, contentContainer);
+  }
+  if (!state.user) {
+    if (state.list && state.params.listid) {
+      renderOtherList(state, contentContainer, {
+        onSortClick
+      });
+    }
+    if (!state.params.listid) {
+      renderLoginSuggestion(state, contentContainer);
+    }
+    return;
+  }
   if (!state.list) return;
-  state.user &&
-    renderAddForm(state, contentContainer, { onPostClick, onCancelClick });
+  renderAddForm(state, contentContainer, { onPostClick, onCancelClick });
   if (state.params.listid) {
     renderOtherList(state, contentContainer, {
       onSortClick
     });
-  } else if (state.user) {
+  } else {
     renderList(state, contentContainer, {
       onEditClick,
       onSortClick
     });
     renderSharedWith(state, contentContainer, { refreshList });
   }
-  state.user && renderOtherLists(state, contentContainer, { setParams });
+  renderOtherLists(state, contentContainer, { setParams });
 }
 
 function renderLoader(state, parent) {
@@ -122,5 +140,25 @@ function renderError(state, parent) {
     className: "container",
     id: "error-container",
     text: state.error
+  });
+}
+
+function renderLoginSuggestion(state, parent) {
+  const { params } = state;
+  let suggestText = 'Sign in with your Twitter account to edit and manage your list.';
+  if (params.mode) {
+    suggestText = `Sign in with your Twitter account to ${params.mode} a note for `
+      + `${params.screenname ? '@' + params.screenname : 'this account'}.`
+  }
+  const loginSuggestionContainer = appendNewElement(parent, {
+    className: "login-suggest-container container"
+  });
+  appendNewElement(loginSuggestionContainer, {
+    text: suggestText
+  });
+  appendNewElement(loginSuggestionContainer, {
+    tag: 'button',
+    className: 'login-suggest-button',
+    text: 'Sign in with Twitter'
   });
 }

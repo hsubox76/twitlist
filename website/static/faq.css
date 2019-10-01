@@ -28,7 +28,7 @@ ul.faq-list {
   font-size: 1.1rem;
 }
 
-li .question {
+.question {
   color: steelblue;
   font-size: 1.5rem;
   font-weight: normal;
@@ -38,11 +38,29 @@ li .question {
   margin: 0.75rem 0;
 }
 
-h3 {
+h1 {
+  font-weight: normal;
+  color: steelblue;
+}
+
+.instruction-list h3 {
+  font-weight: normal;
+  color: seagreen;
+  font-size: 1.5rem;
+}
+
+.answer h3 {
   font-weight: normal;
   color: #666;
 }
 
 a {
   color: royalblue;
+}
+
+a.instructions-link {
+  font-size: 2rem;
+  display: block;
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
 }

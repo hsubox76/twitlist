@@ -70,7 +70,7 @@ export function renderSharedWith(
     selected: listProperties.visibility === VISIBILITY.PUBLIC,
     value: VISIBILITY.PUBLIC
   });
-  if (listProperties.visibility !== VISIBILITY.SHARED) {
+  if (listProperties.visibility === VISIBILITY.PUBLIC) {
     const publicLinkContainer = appendNewElement(container, {
       className: "public-link-container"
     });
@@ -82,6 +82,9 @@ export function renderSharedWith(
       text: `https://twitlist.net/?listid=${user.uid}`,
       href: `https://twitlist.net/?listid=${user.uid}`
     });
+    return;
+  }
+  if (listProperties.visibility !== VISIBILITY.SHARED) {
     return;
   }
   const addShareeForm = appendNewElement(container, {
@@ -110,7 +113,7 @@ export function renderSharedWith(
   ) {
     appendNewElement(table, {
       className: "empty-list-message",
-      text: "You are not sharing this list with anyone."
+      text: "You are not sharing this list with anyone yet."
     });
     return;
   }

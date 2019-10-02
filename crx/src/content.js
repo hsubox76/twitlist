@@ -134,7 +134,7 @@ function getOrCreateContainerEl(tweetEl) {
   let containerEl = null;
   let containerClass = "twitlist-ui-container";
   if (isDarkTheme) {
-    containerClass += ' twitlist-ui-container-dark';
+    containerClass += " twitlist-ui-container-dark";
   }
   const existingContainerEl = getChildWithClass(
     tweetEl,
@@ -175,8 +175,8 @@ function addTweetUI() {
   if (!user || !shouldShowUI) return;
   let tweetEls = document.querySelectorAll('article div[data-testid="tweet"]');
   const themeMeta = document.head.querySelector('meta[name="theme-color"]');
-  const theme = themeMeta ? themeMeta.content : '';
-  if (theme === '#FFFFFF') {
+  const theme = themeMeta ? themeMeta.content : "";
+  if (theme === "#FFFFFF") {
     isDarkTheme = false;
   } else {
     isDarkTheme = true;
@@ -185,6 +185,16 @@ function addTweetUI() {
     const screenname = getScreennameFromTweetEl(tweetEl);
     if (!screenname) continue;
     const screennameLower = screenname.toLowerCase();
+
+    let retweetAnchorEl, retweeterScreenname;
+    tweetEl.querySelectorAll("a").forEach(item => {
+      if (item.textContent.includes("Retweeted")) {
+        retweetAnchorEl = item;
+      }
+    });
+    if (retweetAnchorEl) {
+      retweeterScreenname = retweetAnchorEl.getAttribute('href').slice(1);
+    }
 
     // User doesn't need to add notes to themselves.
     if (screennameLower === user.displayName) continue;

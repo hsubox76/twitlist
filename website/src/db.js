@@ -184,7 +184,11 @@ export function removeSharee(listUid, shareeScreenname, shareeUid) {
 }
 
 export function addSharee(uid, screenname) {
-  return getRef(COLL.SCREEN_NAMES, screenname)
+  let screennameFinal = screenname;
+  if (screenname && screenname[0] === '@') {
+    screennameFinal = screenname.slice(1);
+  }
+  return getRef(COLL.SCREEN_NAMES, screennameFinal)
     .get()
     .then(screennameLookupDoc => {
       if (screennameLookupDoc.exists) {

@@ -17,9 +17,13 @@ export function renderSharedWith(
     inputEl.setAttribute("disabled", true);
     buttonEl.setAttribute("disabled", true);
     e.target.classList.add("disabled");
-    // TODO: Validate screenname more carefully.
+    // TODO: Show error to user if invalid format.
     if (screenname) {
-      addSharee(user.uid, screenname).then(() => {
+      let screennameFormatted = screenname.trim();
+      if (screennameFormatted[0] === '@') {
+        screennameFormatted = screennameFormatted.slice(1);
+      }
+      addSharee(user.uid, screennameFormatted).then(() => {
         refreshList();
       });
     }

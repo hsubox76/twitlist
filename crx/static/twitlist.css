@@ -26,11 +26,10 @@
   position: absolute;
   top: 30px;
   left: 0;
-  background-color: white;
   width: 450px;
 }
 
-.twitlist-content-container.twitlist-content-container-dark {
+.twitlist-ui-container-dark .twitlist-content-container {
   color: #fff;
 }
 

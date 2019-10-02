@@ -139,6 +139,12 @@ export function getList(uid, filterFn) {
     .catch(e => console.error(e));
 }
 
+export function deleteNote(uid, screenname) {
+  return getRef(`${COLL.LISTS}/${uid}/${COLL.NOTES}`)
+    .doc(screenname.toLowerCase())
+    .delete();
+}
+
 export function updateNote(uid, screenname, updates, isNew = true) {
   const method = isNew ? "set" : "update";
   return getRef(`${COLL.LISTS}/${uid}/${COLL.NOTES}`)

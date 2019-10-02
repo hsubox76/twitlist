@@ -1,5 +1,5 @@
 import { appendNewElement } from "../../../shared/dom-utils";
-import { getList, updateNote } from "../db";
+import { getList, updateNote, deleteNote } from "../db";
 import { renderList } from "./list";
 import { renderSharedWith } from "./shared-with";
 import { renderAddForm } from "./add-form";
@@ -56,6 +56,33 @@ export function renderContent(state, parent, renderer, oldState) {
         tid: data.tid,
         mode: "edit"
       }
+    });
+  }
+
+  function onDeleteClick(e) {
+    e.preventDefault();
+    const data = e.target.closest(".user-row").dataset;
+    renderer.setState({
+      noteToDelete: data.screenname
+    });
+  }
+
+  function closeDeleteConfirm(e) {
+    // Could be called from a button or programatically.
+    e && e.preventDefault();
+    renderer.setState({
+      noteToDelete: null
+    });
+  }
+
+  function deleteNoteForScreenname(screenname) {
+    return deleteNote(
+      state.user.uid,
+      screenname
+    ).then(() => {
+      return getList(state.user.uid).then(({ list, listProperties }) =>
+        renderer.setState({ list, listProperties })
+      );
     });
   }
 
@@ -119,7 +146,10 @@ export function renderContent(state, parent, renderer, oldState) {
   } else {
     renderList(state, contentContainer, {
       onEditClick,
-      onSortClick
+      onSortClick,
+      onDeleteClick,
+      deleteNoteForScreenname,
+      closeDeleteConfirm
     });
     renderSharedWith(state, contentContainer, { refreshList });
   }

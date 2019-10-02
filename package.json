@@ -9,8 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --watch",
     "build": "webpack",
-    "build:website": "webpack --config-name website",
-    "build:crx": "webpack --config-name crx",
+    "build:website": "webpack --config-name website --mode=production",
+    "build:crx": "webpack --config-name crx --mode=production",
     "start": "webpack-dev-server --config-name website",
     "zip": "zip -r twitlist_crx.zip crx/dist"
   },

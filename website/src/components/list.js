@@ -1,13 +1,11 @@
 import { sortList } from "../helpers";
 import { renderTableContainer } from "./table-custom";
 import { appendNewElement } from "../../../shared/dom-utils";
-import { updateNote } from "../db";
-import { VISIBILITY } from "../../../shared/constants";
 
 export function renderList(
-  { user, list, listProperties, listSortBy, listSortDirection },
+  { user, list, listSortBy, listSortDirection, noteToDelete },
   parent,
-  { onSortClick, onEditClick }
+  { onSortClick, onEditClick, onDeleteClick, closeDeleteConfirm, deleteNoteForScreenname }
 ) {
   // TODO: Individual visibility toggles.
   // function onVisibilityToggle(e) {
@@ -20,6 +18,11 @@ export function renderList(
   //     /* isNew */ false
   //   );
   // }
+  function onDeleteConfirmClick(e) {
+    e.preventDefault();
+    const data = e.target.closest(".user-row").dataset;
+    deleteNoteForScreenname(data.screenname);
+  }
 
   const sortedList = sortList(list, listSortBy, listSortDirection);
   const { container, table } = renderTableContainer(
@@ -61,6 +64,27 @@ export function renderList(
       target: "_blank",
       text: `@${note.screenname}`
     });
+
+    if (noteToDelete && noteToDelete === note.screenname) {
+      const deleteConfirmCell = appendNewElement(userRow, { className: "delete-cell" });
+      appendNewElement(deleteConfirmCell, {
+        tag: "span",
+        text: `Delete @${note.screenname}?`
+      });
+      appendNewElement(deleteConfirmCell, {
+        tag: "button",
+        className: 'delete-confirm-button',
+        onClick: onDeleteConfirmClick,
+        text: `yes`
+      });
+      appendNewElement(deleteConfirmCell, {
+        tag: "button",
+        onClick: closeDeleteConfirm,
+        text: `cancel`
+      });
+      continue;
+    }
+
     appendNewElement(userRow, { text: note.description });
     // const visibilityCell = appendNewElement(userRow, {
     //   className: "visibility-cell"
@@ -97,6 +121,12 @@ export function renderList(
       onClick: onEditClick,
       href: `/?screenname=${note.screenname}&mode=edit`,
       text: "edit"
+    });
+    const deleteCell = appendNewElement(userRow, { className: "delete-cell" });
+    appendNewElement(deleteCell, {
+      tag: "a",
+      onClick: onDeleteClick,
+      text: "delete"
     });
   }
 }

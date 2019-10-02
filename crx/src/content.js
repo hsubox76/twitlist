@@ -3,6 +3,7 @@ import { ACTION, APP_URL } from "../../shared/constants";
 import {
   deleteElement,
   buildElement,
+  appendNewElement,
   getChildWithClass,
   getOrCreateChildWithClass
 } from "../../shared/dom-utils";
@@ -15,6 +16,9 @@ let knownUsers = {};
 let user = null;
 let shouldShowUI = true;
 let isDarkTheme = false;
+
+const listSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M464 480H48c-26.51 0-48-21.49-48-48V80c0-26.51 21.49-48 48-48h416c26.51 0 48 21.49 48 48v352c0 26.51-21.49 48-48 48zM128 120c-22.091 0-40 17.909-40 40s17.909 40 40 40 40-17.909 40-40-17.909-40-40-40zm0 96c-22.091 0-40 17.909-40 40s17.909 40 40 40 40-17.909 40-40-17.909-40-40-40zm0 96c-22.091 0-40 17.909-40 40s17.909 40 40 40 40-17.909 40-40-17.909-40-40-40zm288-136v-32c0-6.627-5.373-12-12-12H204c-6.627 0-12 5.373-12 12v32c0 6.627 5.373 12 12 12h200c6.627 0 12-5.373 12-12zm0 96v-32c0-6.627-5.373-12-12-12H204c-6.627 0-12 5.373-12 12v32c0 6.627 5.373 12 12 12h200c6.627 0 12-5.373 12-12zm0 96v-32c0-6.627-5.373-12-12-12H204c-6.627 0-12 5.373-12 12v32c0 6.627 5.373 12 12 12h200c6.627 0 12-5.373 12-12z"/></svg>';
+const plusSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z"/></svg>';
 
 // Listens for messages from background.js
 chrome.runtime.onMessage.addListener(request => {
@@ -58,42 +62,44 @@ sendMessage({ action: ACTION.BG.GET_USER }).then(response => {
   }
 });
 
-function updateInfoEl(containerEl, screenname) {
+function updateInfoEl(contentEl, screenname) {
+  const tooltipEl = contentEl.parentElement.querySelector('.twitlist-tooltip-icon');
   if (knownUsers[screenname]) {
     const infoEl = getOrCreateChildWithClass(
-      containerEl,
+      contentEl,
       "twitlist-info-container",
       {
         text: knownUsers[screenname].description,
         title: knownUsers[screenname].description
       }
     );
+    tooltipEl.innerHTML = listSvg;
     // If element exists but content has changed.
     infoEl.textContent = knownUsers[screenname].description;
     infoEl.setAttribute("title", knownUsers[screenname].description);
   } else {
     const existingInfoEl = getChildWithClass(
-      containerEl,
+      contentEl,
       "twitlist-info-container"
     );
+    tooltipEl.innerHTML = plusSvg;
     deleteElement(existingInfoEl);
   }
 }
 
-function updateActionLink(containerEl, screenname) {
-  const actionLinkEl = getOrCreateChildWithClass(containerEl, "action-link", {
-    tag: "a",
-    target: "twitlisttab"
+function updateActionLink(contentEl, screenname) {
+  const actionTextEl = getOrCreateChildWithClass(contentEl, "action-link", {
+    tag: "a"
   });
   let link = `${APP_URL}?screenname=${screenname}`;
   if (knownUsers[screenname]) {
-    actionLinkEl.textContent = "view on twitlist";
+    actionTextEl.textContent = "click to view on twitlist";
     link += "&mode=edit";
   } else {
-    actionLinkEl.textContent = "add a note about this user";
+    actionTextEl.textContent = "click to add a note about this user";
     link += "&mode=add";
   }
-  actionLinkEl.setAttribute("href", link);
+  contentEl.parentElement.setAttribute("href", link);
 }
 
 function removeTweetUI() {
@@ -107,31 +113,9 @@ function removeTweetUI() {
   }
 }
 
-function getTweetContentElement(tweetEl) {
-  const timeElement = tweetEl.querySelector("time");
-  if (!timeElement) return null;
-  const userInfoHeight = timeElement.parentElement.clientHeight;
-  let currentElement = timeElement.parentElement;
-  while (
-    currentElement.parentElement &&
-    currentElement.parentElement !== tweetEl
-  ) {
-    currentElement = currentElement.parentElement;
-    // Keep going up a parent until the height significantly changes,
-    // indicating it now includes the tweet body.
-    // Use 1.9 to allow some space for emojis, verified icons, etc.
-    if (currentElement.clientHeight > userInfoHeight * 1.9) {
-      break;
-    }
-  }
-  if (currentElement && currentElement.children[1]) {
-    return currentElement.children[1];
-  }
-  return null;
-}
-
 function getOrCreateContainerEl(tweetEl) {
   let containerEl = null;
+  let contentEl = null;
   let containerClass = "twitlist-ui-container";
   if (isDarkTheme) {
     containerClass += " twitlist-ui-container-dark";
@@ -143,13 +127,17 @@ function getOrCreateContainerEl(tweetEl) {
   if (existingContainerEl) {
     containerEl = existingContainerEl;
   } else {
-    const tweetTextEl = getTweetContentElement(tweetEl);
-    if (tweetTextEl && tweetTextEl.parentElement) {
-      containerEl = buildElement({ className: containerClass });
-      tweetTextEl.parentElement.insertBefore(containerEl, tweetTextEl);
+    const timeElement = tweetEl.querySelector("time");
+    if (!timeElement) return null;
+    const timeLink = timeElement.closest('a');
+    if (timeLink && timeLink.parentElement) {
+      containerEl = buildElement({ tag: 'a', className: containerClass, target: 'twitlisttab' });
+      appendNewElement(containerEl, { className: 'twitlist-tooltip-icon', innerHTML: plusSvg });
+      contentEl = appendNewElement(containerEl, { className: 'twitlist-content-container' });
+      timeLink.parentElement.insertBefore(containerEl, timeLink);
     }
   }
-  return containerEl;
+  return contentEl;
 }
 
 function getScreennameEl(tweetEl) {
@@ -199,19 +187,19 @@ function addTweetUI() {
     // User doesn't need to add notes to themselves.
     if (screennameLower === user.displayName) continue;
 
-    const containerEl = getOrCreateContainerEl(tweetEl);
-    if (!containerEl) continue;
+    const contentEl = getOrCreateContainerEl(tweetEl);
+    if (!contentEl) continue;
 
     const existingInfoEl = getChildWithClass(
-      containerEl,
+      contentEl,
       "twitlist-info-container"
     );
     if (!existingInfoEl) {
       // clear it out if it only had an action link.
-      containerEl.innerHTML = "";
+      contentEl.innerHTML = "";
     }
-    updateInfoEl(containerEl, screennameLower);
-    updateActionLink(containerEl, screennameLower);
+    updateInfoEl(contentEl, screennameLower);
+    updateActionLink(contentEl, screennameLower);
   }
 }
 

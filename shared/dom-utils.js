@@ -65,6 +65,9 @@ export function buildElement(options) {
       case 'className':
         newElement.classList = options[attr];
         break;
+      case 'innerHTML':
+        newElement.innerHTML = options[attr];
+        break;
       default:
         newElement.setAttribute(attr, options[attr]);
     }

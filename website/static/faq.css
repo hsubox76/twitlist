@@ -4,6 +4,10 @@ html {
   background-color: #efefef;
 }
 
+code {
+  color: deeppink;
+}
+
 .container {
   background-color: white;
   margin: 10px;

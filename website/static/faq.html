@@ -9,9 +9,14 @@
         <a href="/" class="title">twitlist</a> faq
       </div>
     </div>
+
     <div class="container">
       <a class="instructions-link" href="#instructions">Setup Instructions</a>
-      <a class="instructions-link" href="#faq">FAQ</a>
+      <a class="instructions-link" href="#troubleshooting">Troubleshooting</a>
+      <a class="instructions-link" href="#faq">Other FAQ</a>
+    </div>
+
+    <div class="container">
       <a name="instructions"></a>
       <h1>Setup Instructions</h1>
       <div>
@@ -48,12 +53,14 @@
             </p>
             <img src="/images/crx-login.png" />
             <p>
-              Do it! A large popup will open to do the login.</p>
-              <img src="/images/login-popup.png" />
-              <p>I swear I am not reading your Twitter account.  That's the minimal amount
-                of permissions I'm allowed to set the app to by Twitter.  All I'm using
-                your account for is to log in and verify you're you.  Anyway, when it's done,
-              it'll go away and you should be logged in.
+              Do it! A large popup will open to do the login.
+            </p>
+            <img src="/images/login-popup.png" />
+            <p>
+              I swear I am not reading your Twitter account. That's the minimal
+              amount of permissions I'm allowed to set the app to by Twitter.
+              All I'm using your account for is to log in and verify you're you.
+              Anyway, when it's done, it'll go away and you should be logged in.
             </p>
             <img src="/images/crx-logged-in.png" />
           </li>
@@ -126,8 +133,61 @@
           </li>
         </ol>
       </div>
+    </div>
+
+    <div class="container">
+      <a name="troubleshooting"></a>
+      <h1>Troubleshooting</h1>
+      <ul class="faq-list">
+        <li>
+          <h2 class="question">
+            Nothing happens when I click the login button?
+          </h2>
+          <div class="answer">
+            <p>
+              The button triggers a popup that lets you log in with your Twitter
+              account. If you have an ad blocker or browser ad-blocking settings
+              it may be blocking the login popup. See if you can change your
+              settings to allow popups from this page.
+            </p>
+          </div>
+        </li>
+        <li>
+          <h2 class="question">
+            I'm not very familiar with installing/updating/deleting Chrome
+            Extensions.
+          </h2>
+          <div class="answer">
+            <p>
+              <a
+                href="https://support.google.com/chrome_webstore/answer/2664769?hl=en#"
+                >Here is the help page for installing and managing Chrome
+                Extensions</a
+              >. In addition to navigating to the extensions settings through
+              the menu, you can also type
+            </p>
+            <p><code>chrome://extensions</code></p>
+            <p>into the URL bar to go straight there.</p>
+          </div>
+        </li>
+        <li>
+          <h2 class="question">Where can I report bugs?</h2>
+          <div class="answer">
+            <p>
+              Uh... let's try the
+              <a href="https://github.com/hsubox76/twitlist/issues"
+                >Github issues page</a
+              >
+              for this repo or DM me on Twitter if you know my handle.
+            </p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="container">
       <a name="faq"></a>
-      <h1>FAQ</h1>
+      <h1>Other FAQ</h1>
       <ul class="faq-list">
         <li>
           <h2 class="question">What is the purpose of this?</h2>
@@ -214,25 +274,13 @@
           <div class="answer">
             <p>
               I'm collecting your twitter username and linking it to your
-              twitlist account.  I am also collecting all the notes you make
-              on this app,
-              obviously.  I am not reading anything on your Twitter account.
-              I know the login says I have access to your tweets and DMs but
-              despite the fact I only want to use Twitter login verification
-              and get your screenname, reading your account is the minimal
-              amount of permissions a Twitter-integrated app can ask for.
-            </p>
-          </div>
-        </li>
-        <li>
-          <h2 class="question">Where can I report bugs?</h2>
-          <div class="answer">
-            <p>
-              Uh... let's try the
-              <a href="https://github.com/hsubox76/twitlist/issues"
-                >Github issues page</a
-              >
-              for this repo or DM me on Twitter if you know my handle.
+              twitlist account. I am also collecting all the notes you make on
+              this app, obviously. I am not reading anything on your Twitter
+              account. I know the login says I have access to your tweets and
+              DMs but despite the fact I only want to use Twitter login
+              verification and get your screenname, reading your account is the
+              minimal amount of permissions a Twitter-integrated app can ask
+              for.
             </p>
           </div>
         </li>

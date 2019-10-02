@@ -5,7 +5,13 @@ import { appendNewElement } from "../../../shared/dom-utils";
 export function renderList(
   { user, list, listSortBy, listSortDirection, noteToDelete },
   parent,
-  { onSortClick, onEditClick, onDeleteClick, closeDeleteConfirm, deleteNoteForScreenname }
+  {
+    onSortClick,
+    onEditClick,
+    onDeleteClick,
+    closeDeleteConfirm,
+    deleteNoteForScreenname
+  }
 ) {
   // TODO: Individual visibility toggles.
   // function onVisibilityToggle(e) {
@@ -66,14 +72,16 @@ export function renderList(
     });
 
     if (noteToDelete && noteToDelete === note.screenname) {
-      const deleteConfirmCell = appendNewElement(userRow, { className: "delete-cell" });
+      const deleteConfirmCell = appendNewElement(userRow, {
+        className: "delete-cell"
+      });
       appendNewElement(deleteConfirmCell, {
         tag: "span",
         text: `Delete @${note.screenname}?`
       });
       appendNewElement(deleteConfirmCell, {
         tag: "button",
-        className: 'delete-confirm-button',
+        className: "delete-confirm-button",
         onClick: onDeleteConfirmClick,
         text: `yes`
       });

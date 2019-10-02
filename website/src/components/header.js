@@ -73,7 +73,12 @@ export function renderHeader(
   const loginContainer = appendNewElement(headerContainer, {
     className: "login-container"
   });
-  appendNewElement(loginContainer, { tag: 'a', href: 'faq.html', className: "header-faq-link", text: 'FAQ' });
+  appendNewElement(loginContainer, {
+    tag: "a",
+    href: "faq.html",
+    className: "header-faq-link",
+    text: "FAQ"
+  });
   const loginTextEl = appendNewElement(loginContainer, { id: "login-text" });
   const loginTextButton = appendNewElement(loginContainer, {
     tag: "button",

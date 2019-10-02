@@ -76,10 +76,7 @@ export function renderContent(state, parent, renderer, oldState) {
   }
 
   function deleteNoteForScreenname(screenname) {
-    return deleteNote(
-      state.user.uid,
-      screenname
-    ).then(() => {
+    return deleteNote(state.user.uid, screenname).then(() => {
       return getList(state.user.uid).then(({ list, listProperties }) =>
         renderer.setState({ list, listProperties })
       );
@@ -175,10 +172,12 @@ function renderError(state, parent) {
 
 function renderLoginSuggestion(state, parent) {
   const { params } = state;
-  let suggestText = 'Sign in with your Twitter account to edit and manage your list.';
+  let suggestText =
+    "Sign in with your Twitter account to edit and manage your list.";
   if (params.mode) {
-    suggestText = `Sign in with your Twitter account to ${params.mode} a note for `
-      + `${params.screenname ? '@' + params.screenname : 'this account'}.`
+    suggestText =
+      `Sign in with your Twitter account to ${params.mode} a note for ` +
+      `${params.screenname ? "@" + params.screenname : "this account"}.`;
   }
   const loginSuggestionContainer = appendNewElement(parent, {
     className: "login-suggest-container container"
@@ -187,8 +186,8 @@ function renderLoginSuggestion(state, parent) {
     text: suggestText
   });
   appendNewElement(loginSuggestionContainer, {
-    tag: 'button',
-    className: 'login-suggest-button',
-    text: 'Sign in with Twitter'
+    tag: "button",
+    className: "login-suggest-button",
+    text: "Sign in with Twitter"
   });
 }

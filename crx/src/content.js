@@ -91,15 +91,11 @@ function updateActionLink(contentEl, screenname) {
   const actionTextEl = getOrCreateChildWithClass(contentEl, "action-link", {
     tag: "a"
   });
-  let link = `${APP_URL}?screenname=${screenname}`;
   if (knownUsers[screenname]) {
-    actionTextEl.textContent = "click to view on twitlist";
-    link += "&mode=edit";
+    actionTextEl.textContent = "click to edit";
   } else {
     actionTextEl.textContent = "click to add a note about this user";
-    link += "&mode=add";
   }
-  contentEl.parentElement.setAttribute("href", link);
 }
 
 function removeTweetUI() {
@@ -113,7 +109,72 @@ function removeTweetUI() {
   }
 }
 
-function getOrCreateContainerEl(tweetEl) {
+function updateNote(e) {
+  console.log('CLICK!', e.target);
+  const containerEl = document.getElementById('edit-note');
+  const screenname = containerEl.dataset['screenname'];
+  const description = document.getElementById('edit-note-input').value;
+  if (!screenname) {
+    console.error('screenname missing, cannot update note');
+  }
+  sendMessage({ action: ACTION.BG.UPDATE_NOTE, description, screenname }).then(response => {
+    if (response.success) {
+      removeEditUI();
+    } else if (response.error) {
+      console.error(response.error);
+    }
+  })
+}
+
+function addEditUI(containerEl) {
+  const contentEl = containerEl.querySelector('.twitlist-content-container');
+  containerEl.id = 'edit-note';
+  contentEl.innerHTML = '';
+  const formEl = getOrCreateChildWithClass(
+    contentEl,
+    "twitlist-edit-form",
+    {
+      tag: 'form'
+    }
+  );
+  let currentText = '';
+  if (knownUsers && containerEl.dataset['screenname']) {
+    const note = knownUsers[containerEl.dataset['screenname']];
+    if (note) {
+      currentText = note.description;
+    }
+  }
+  appendNewElement(formEl, { tag: 'input', placeholder: 'add a note', id: 'edit-note-input', defaultValue: currentText });
+  const controlsContainer = appendNewElement(formEl, { className: 'controls-container' });
+  appendNewElement(controlsContainer, { tag: 'a', text: 'manage notes', className: 'manage', href: APP_URL, target: 'twitlisttab' });
+  const buttonContainer = appendNewElement(controlsContainer, { className: 'button-container' });
+  appendNewElement(buttonContainer, { tag: 'button', text: 'save', className: 'save', onClick: updateNote });
+  appendNewElement(buttonContainer, { tag: 'button', text: 'cancel', className: 'cancel', onClick: removeEditUI });
+}
+
+function removeEditUI() {
+  const existingEditNote = document.querySelector('#edit-note');
+  const screenname = existingEditNote.dataset['screenname'];
+  const contentEl = existingEditNote.querySelector('.twitlist-content-container');
+  existingEditNote.id = null;
+  contentEl.innerHTML = '';
+  updateInfoEl(contentEl, screenname);
+  updateActionLink(contentEl, screenname);
+}
+
+function handleNoteClick(e) {
+  if (e.target.classList.contains('manage')) {
+    return;
+  }
+  e.preventDefault();
+  const uiContainer = e.target.closest('.twitlist-ui-container');
+  if (!uiContainer || uiContainer.id === 'edit-note') {
+    return;
+  }
+  addEditUI(uiContainer);
+}
+
+function getOrCreateContainerEl(tweetEl, screenname) {
   let containerEl = null;
   let contentEl = null;
   let containerClass = "twitlist-ui-container";
@@ -131,7 +192,14 @@ function getOrCreateContainerEl(tweetEl) {
     if (!timeElement) return null;
     const timeLink = timeElement.closest('a');
     if (timeLink && timeLink.parentElement) {
-      containerEl = buildElement({ tag: 'a', className: containerClass, target: 'twitlisttab' });
+      // containerEl = buildElement({ tag: 'a', className: containerClass, target: 'twitlisttab' });
+      containerEl = buildElement({ tag: 'a',
+        className: containerClass,
+        onClick: handleNoteClick,
+        data: {
+          screenname
+        }
+      });
       appendNewElement(containerEl, { className: 'twitlist-tooltip-icon', innerHTML: plusSvg });
       contentEl = appendNewElement(containerEl, { className: 'twitlist-content-container' });
       timeLink.parentElement.insertBefore(containerEl, timeLink);
@@ -187,8 +255,11 @@ function addTweetUI() {
     // User doesn't need to add notes to themselves.
     if (screennameLower === user.displayName) continue;
 
-    const contentEl = getOrCreateContainerEl(tweetEl);
+    const contentEl = getOrCreateContainerEl(tweetEl, screennameLower);
     if (!contentEl) continue;
+    if (contentEl.parentElement.id === 'edit-note') {
+      continue;
+    }
 
     const existingInfoEl = getChildWithClass(
       contentEl,

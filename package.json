@@ -10,9 +10,9 @@
     "watch": "webpack --watch",
     "build": "webpack",
     "build:website": "webpack --config-name website --mode=production",
-    "build:crx": "webpack --config-name crx --mode=production",
+    "build:crx": "webpack --config-name crx",
     "start": "webpack-dev-server --config-name website",
-    "zip": "zip -r twitlist_crx.zip crx/dist"
+    "zip": "webpack --config-name crx --mode=production; zip -r twitlist_crx.zip crx/dist"
   },
   "dependencies": {
     "firebase": "^7.0.0"

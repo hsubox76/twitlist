@@ -127,6 +127,35 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       subscribeToList(request.uid);
       sendResponse({ success: true });
       break;
+    case ACTION.BG.UPDATE_NOTE:
+      if (!user.uid) {
+        sendResponse({ error: 'User does not seem to be logged in.' });
+      };
+      const noteRef = firebase.firestore()
+        .collection(COLL.LISTS)
+        .doc(user.uid)
+        .collection(COLL.NOTES)
+        .doc(request.screenname);
+      noteRef
+        .get()
+        .then((doc) => {
+          return doc.exists ? 'update' : 'set';
+        })
+        .then((command) => {
+          return noteRef[command]({
+            description: request.description,
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        })
+        .then(() => {
+          console.log('sending success response');
+          sendResponse({ success: true });
+        })
+        .catch(e => {
+          console.log('sending error response');
+          sendResponse({ error: e.message });
+        });
+      return true;
     case ACTION.BG.SIGN_OUT:
       unsubscribe && unsubscribe();
       unsubscribe = null;

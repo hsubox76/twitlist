@@ -9,10 +9,10 @@
 
 .twitlist-tooltip-icon svg {
   bottom: -3px;
-  height: 20px;
-  width: 20px;
+  height: 16px;
+  width: 16px;
   position: relative;
-  fill: rgba(29,161,242,1.00);
+  fill: #a95bff;
 }
 
 .twitlist-content-container {
@@ -49,17 +49,69 @@
   font-style: italic;
 }
 
-.twitlist-content-container button:hover {
-  background-color: #ccc;
-}
-
 .twitlist-content-container.twitlist-content-container-dark {
   background-color: #333;
 }
 
-.twitlist-ui-container:hover .twitlist-content-container {
+.twitlist-ui-container:hover .twitlist-content-container,
+#edit-note.twitlist-ui-container .twitlist-content-container {
   display: flex;
 }
+
 .twitlist-ui-container:hover {
   height: 60px;
+}
+
+#edit-note.twitlist-ui-container {
+  height: 100px;
+}
+
+.twitlist-edit-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.twitlist-edit-form input {
+  font-size: 1rem;
+  height: 24px;
+  flex: 1;
+  padding: 4px;
+}
+
+.twitlist-edit-form .button-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.twitlist-edit-form .controls-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.twitlist-edit-form button {
+  font-size: 1rem;
+  height: 24px;
+  color: white;
+  background-color: #999;
+  border-radius: 4px;
+  border: none;
+  margin: 2px 0px 2px 5px;
+}
+
+button.save {
+  background-color: #37a64f;
+}
+
+a.manage {
+  color: rgba(29,161,242,1.00);
+  margin-left: 2px;
+}
+
+.twitlist-edit-form button:hover {
+  box-shadow: inset 0 0 0 50px rgba(255, 255, 255, 0.2);
 }

@@ -101,6 +101,7 @@
   border-radius: 4px;
   border: none;
   margin: 2px 0px 2px 5px;
+  cursor: pointer;
 }
 
 button.save {

@@ -110,7 +110,6 @@ function removeTweetUI() {
 }
 
 function updateNote(e) {
-  console.log('CLICK!', e.target);
   const containerEl = document.getElementById('edit-note');
   const screenname = containerEl.dataset['screenname'];
   const description = document.getElementById('edit-note-input').value;
@@ -144,7 +143,7 @@ function addEditUI(containerEl) {
       currentText = note.description;
     }
   }
-  appendNewElement(formEl, { tag: 'input', placeholder: 'add a note', id: 'edit-note-input', defaultValue: currentText });
+  appendNewElement(formEl, { tag: 'input', placeholder: 'add a note', id: 'edit-note-input', defaultValue: currentText, autocomplete: 'off' });
   const controlsContainer = appendNewElement(formEl, { className: 'controls-container' });
   appendNewElement(controlsContainer, { tag: 'a', text: 'manage notes', className: 'manage', href: APP_URL, target: 'twitlisttab' });
   const buttonContainer = appendNewElement(controlsContainer, { className: 'button-container' });

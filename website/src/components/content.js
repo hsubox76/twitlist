@@ -114,7 +114,7 @@ export function renderContent(state, parent, renderer, oldState) {
     id: "content-container",
     className: "container"
   });
-  if (state.isLoading) {
+  if (state.userIsLoading) {
     // Only render loader.
     renderLoader(state, contentContainer);
     return;
@@ -154,7 +154,6 @@ export function renderContent(state, parent, renderer, oldState) {
 }
 
 function renderLoader(state, parent) {
-  if (state.user) return;
   const loadingContainer = appendNewElement(parent, {
     className: "container",
     id: "content-loading-container"

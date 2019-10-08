@@ -3,7 +3,7 @@ import { renderTableContainer } from "./table-custom";
 import { appendNewElement } from "../../../shared/dom-utils";
 
 export function renderOtherList(
-  { list, listProperties, listSortBy, listSortDirection },
+  { list, listProperties, listSortBy, listSortDirection, dataIsLoading },
   parent,
   { onSortClick }
 ) {
@@ -16,9 +16,12 @@ export function renderOtherList(
       : ""
   );
   if (!list.length) {
+    const message = dataIsLoading
+      ? "Getting list data..."
+      : "This list is empty.";
     appendNewElement(container, {
       className: "empty-list-message",
-      text: "This list is empty."
+      text: message
     });
     return;
   }

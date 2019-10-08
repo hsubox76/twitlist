@@ -1,47 +1,49 @@
-import firebase from "firebase/app";
-import "firebase/auth";
+import { getFirebase } from "../db";
 import { appendNewElement } from "../../../shared/dom-utils";
 
-const provider = new firebase.auth.TwitterAuthProvider();
-
 export function renderHeader(
-  { user, listProperties, listUnsub },
+  { user, listProperties, listUnsub, userIsLoading },
   parent,
   renderer
 ) {
   function login() {
-    return firebase
-      .auth()
-      .signInWithPopup(provider)
-      .then(credential => {
-        if (credential.user) {
-          // Get screenname if new user and set it as profile displayname
-          if (credential.additionalUserInfo) {
-            let screenName =
-              credential.additionalUserInfo.profile["screen_name"];
-            screenName = screenName.toLowerCase();
-            if (screenName && credential.user.displayName !== screenName) {
-              credential.user
-                .updateProfile({
-                  displayName: screenName
-                })
-                .then(() => renderer.setState({ user: credential.user }));
-            } else {
-              renderer.setState({ user: credential.user });
+    return getFirebase().then(firebase => {
+      const provider = new firebase.auth.TwitterAuthProvider();
+      firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then(credential => {
+          if (credential.user) {
+            // Get screenname if new user and set it as profile displayname
+            if (credential.additionalUserInfo) {
+              let screenName =
+                credential.additionalUserInfo.profile["screen_name"];
+              screenName = screenName.toLowerCase();
+              if (screenName && credential.user.displayName !== screenName) {
+                credential.user
+                  .updateProfile({
+                    displayName: screenName
+                  })
+                  .then(() => renderer.setState({ user: credential.user }));
+              } else {
+                renderer.setState({ user: credential.user });
+              }
             }
+          } else {
+            // TODO: log error
           }
-        } else {
-          // TODO: log error
-        }
-      });
+        });
+    });
   }
 
   function logout() {
     listUnsub && listUnsub();
-    firebase
-      .auth()
-      .signOut()
-      .then(() => renderer.setState({ user: null, list: [], params: {} }));
+    getFirebase.then(firebase => {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => renderer.setState({ user: null, list: [], params: {} }));
+    });
   }
 
   const headerContainer = appendNewElement(parent, {
@@ -79,6 +81,10 @@ export function renderHeader(
     className: "header-faq-link",
     text: "FAQ"
   });
+  if (userIsLoading) {
+    appendNewElement(loginContainer, { id: "login-text", text: "wait..." });
+    return;
+  }
   const loginTextEl = appendNewElement(loginContainer, { id: "login-text" });
   const loginTextButton = appendNewElement(loginContainer, {
     tag: "button",

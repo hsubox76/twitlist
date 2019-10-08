@@ -15,7 +15,7 @@
     "zip": "webpack --config-name crx --mode=production; zip -r twitlist_crx.zip crx/dist"
   },
   "dependencies": {
-    "firebase": "^7.0.0"
+    "firebase": "^7.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

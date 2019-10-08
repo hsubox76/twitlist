@@ -1,8 +1,24 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
 import { COLL, VISIBILITY } from "../../shared/constants";
+import { firebaseConfig } from "../../shared/firebase-config";
 
-export function getRef(collectionOrPath, doc) {
+let firebase;
+
+export async function getFirebase() {
+  if (firebase) return firebase;
+  const importPromises = [
+    import(/* webpackChunkName: "app" */ "firebase/app"),
+    import(/* webpackChunkName: "auth" */ "firebase/auth"),
+    import(/* webpackChunkName: "firestore" */ "firebase/firestore")
+  ];
+  return await Promise.all(importPromises).then(([firebaseApp]) => {
+    firebase = firebaseApp;
+    firebaseApp.initializeApp(firebaseConfig);
+    return firebaseApp;
+  });
+}
+
+export async function getRef(collectionOrPath, doc) {
+  await getFirebase();
   const pathParts = collectionOrPath.split("/");
   if (pathParts.length % 2 === 0) {
     // document
@@ -26,8 +42,9 @@ export function getRef(collectionOrPath, doc) {
   }
 }
 
-export function subscribeToListsSharedWithUser(uid, onData) {
-  return getRef(COLL.LISTS)
+export async function subscribeToListsSharedWithUser(uid, onData) {
+  const ref = await getRef(COLL.LISTS);
+  return ref
     .where("visibility", "==", VISIBILITY.SHARED)
     .where("sharedWith", "array-contains", uid)
     .onSnapshot(snap => {
@@ -39,8 +56,8 @@ export function subscribeToListsSharedWithUser(uid, onData) {
     });
 }
 
-export function subscribeToPublicListsSharedWithUser(uid, onData) {
-  return getRef(COLL.LISTS)
+export async function subscribeToPublicListsSharedWithUser(uid, onData) {
+  return (await getRef(COLL.LISTS))
     .where("visibility", "==", VISIBILITY.PUBLIC)
     .where("sharedWith", "array-contains", uid)
     .onSnapshot(snap => {
@@ -80,8 +97,9 @@ export async function getGuestList(uid, listUid) {
   return { list: notes || [], listProperties: properties };
 }
 
-export function getListProperties(uid) {
-  return getRef(COLL.LISTS, uid)
+export async function getListProperties(uid) {
+  const ref = await getRef(COLL.LISTS, uid);
+  return ref
     .get()
     .then(function handleListPropsSnapshot(snap) {
       if (snap) {
@@ -95,16 +113,15 @@ export function getListProperties(uid) {
     });
 }
 
-export function updateListProperties(uid, updates) {
-  return getRef(COLL.LISTS, uid)
-    .update(updates)
-    .catch(e => {
-      throw new Error(`Error updating ${COLL.LISTS}/${uid}: ${e.message}`);
-    });
+export async function updateListProperties(uid, updates) {
+  const ref = await getRef(COLL.LISTS, uid);
+  return ref.update(updates).catch(e => {
+    throw new Error(`Error updating ${COLL.LISTS}/${uid}: ${e.message}`);
+  });
 }
 
-export function getListNotes(uid, filterFn) {
-  let getNotesQuery = getRef(`${COLL.LISTS}/${uid}/${COLL.NOTES}`);
+export async function getListNotes(uid, filterFn) {
+  let getNotesQuery = await getRef(`${COLL.LISTS}/${uid}/${COLL.NOTES}`);
   if (filterFn) {
     getNotesQuery = filterFn(getNotesQuery);
   }
@@ -129,7 +146,7 @@ export function getListNotes(uid, filterFn) {
     });
 }
 
-export function getList(uid, filterFn) {
+export async function getList(uid, filterFn) {
   const getCollection = getListNotes(uid, filterFn);
   const getProperties = getListProperties(uid);
   return Promise.all([getCollection, getProperties])
@@ -139,15 +156,14 @@ export function getList(uid, filterFn) {
     .catch(e => console.error(e));
 }
 
-export function deleteNote(uid, screenname) {
-  return getRef(`${COLL.LISTS}/${uid}/${COLL.NOTES}`)
-    .doc(screenname.toLowerCase())
-    .delete();
+export async function deleteNote(uid, screenname) {
+  const ref = await getRef(`${COLL.LISTS}/${uid}/${COLL.NOTES}`);
+  return ref.doc(screenname.toLowerCase()).delete();
 }
 
-export function updateNote(uid, screenname, updates, isNew = true) {
+export async function updateNote(uid, screenname, updates, isNew = true) {
   const method = isNew ? "set" : "update";
-  return getRef(`${COLL.LISTS}/${uid}/${COLL.NOTES}`)
+  return (await getRef(`${COLL.LISTS}/${uid}/${COLL.NOTES}`))
     .doc(screenname.toLowerCase())
     [method](
       Object.assign({}, updates, {
@@ -156,19 +172,20 @@ export function updateNote(uid, screenname, updates, isNew = true) {
     );
 }
 
-export function removeSharee(listUid, shareeScreenname, shareeUid) {
+export async function removeSharee(listUid, shareeScreenname, shareeUid) {
+  await getFirebase();
   const updates = {
     [`sharedWithScreennames.${shareeScreenname}`]: firebase.firestore.FieldValue.delete()
   };
   if (shareeUid) {
     updates.sharedWith = firebase.firestore.FieldValue.arrayRemove(shareeUid);
   }
-  const removeFromList = getRef(COLL.LISTS, listUid)
+  const removeFromList = await getRef(COLL.LISTS, listUid)
     .update(updates)
     .catch(e => {
       throw new Error("Could not remove " + listUid + " from list");
     });
-  const removeFromPendingShares = getRef(COLL.PENDING_SHARES)
+  const removeFromPendingShares = await getRef(COLL.PENDING_SHARES)
     .get()
     .then(doc => {
       if (doc.exists) {
@@ -183,17 +200,18 @@ export function removeSharee(listUid, shareeScreenname, shareeUid) {
   return Promise.all([removeFromList, removeFromPendingShares]);
 }
 
-export function addSharee(uid, screenname) {
+export async function addSharee(uid, screenname) {
   let screennameFinal = screenname;
-  if (screenname && screenname[0] === '@') {
+  if (screenname && screenname[0] === "@") {
     screennameFinal = screenname.slice(1);
   }
-  return getRef(COLL.SCREEN_NAMES, screennameFinal)
+  const ref = await getRef(COLL.SCREEN_NAMES, screennameFinal);
+  return ref
     .get()
-    .then(screennameLookupDoc => {
+    .then(async screennameLookupDoc => {
       if (screennameLookupDoc.exists) {
         // Found account, add account's UID to this list's sharedWith array
-        return getRef(COLL.LISTS, uid)
+        return (await getRef(COLL.LISTS, uid))
           .update({
             sharedWith: firebase.firestore.FieldValue.arrayUnion(
               screennameLookupDoc.data().uid
@@ -211,7 +229,7 @@ export function addSharee(uid, screenname) {
           });
       } else {
         // User has not created an account with us, no UID.
-        const listPlaceholderAdd = getRef(COLL.LISTS, uid)
+        const listPlaceholderAdd = await getRef(COLL.LISTS, uid)
           .update({
             [`sharedWithScreennames.${screenname}`]: "_"
           })
@@ -222,7 +240,7 @@ export function addSharee(uid, screenname) {
           });
         // Add screenname to a pendingShares collection that will be checked
         // whenever the user does create an account.
-        const pendingAdd = getRef(COLL.PENDING_SHARES, screenname)
+        const pendingAdd = await getRef(COLL.PENDING_SHARES, screenname)
           .get()
           .then(pendingSharesDoc => {
             if (pendingSharesDoc.exists) {

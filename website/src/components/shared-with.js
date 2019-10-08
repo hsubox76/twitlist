@@ -20,7 +20,7 @@ export function renderSharedWith(
     // TODO: Show error to user if invalid format.
     if (screenname) {
       let screennameFormatted = screenname.trim();
-      if (screennameFormatted[0] === '@') {
+      if (screennameFormatted[0] === "@") {
         screennameFormatted = screennameFormatted.slice(1);
       }
       addSharee(user.uid, screennameFormatted).then(() => {

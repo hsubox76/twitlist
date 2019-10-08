@@ -1,6 +1,5 @@
 var path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = [{
@@ -29,6 +28,7 @@ module.exports = [{
                             }
                         ]
                     ],
+                    plugins: ["@babel/plugin-syntax-dynamic-import"]
                 }
             }
         ]
@@ -44,6 +44,11 @@ module.exports = [{
         contentBase: './website/dist'
     },
     optimization: {
+        splitChunks: {
+            name: (module, chunks) => {
+              return chunks[0].name;
+            }
+        },
         minimizer: [
             new TerserPlugin({
                 terserOptions: {
@@ -55,10 +60,6 @@ module.exports = [{
         ]
     },
     plugins: [
-      new HtmlWebpackPlugin({
-        title: 'Twitlist',
-        template: './website/src/index.html'
-      }),
       new CopyPlugin([
         { from: './website/static', to: './' }
       ])

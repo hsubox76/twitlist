@@ -8,11 +8,15 @@ export async function getFirebase() {
   const importPromises = [
     import(/* webpackChunkName: "app" */ "firebase/app"),
     import(/* webpackChunkName: "auth" */ "firebase/auth"),
-    import(/* webpackChunkName: "firestore" */ "firebase/firestore")
+    import(/* webpackChunkName: "firestore" */ "firebase/firestore"),
+    import(/* webpackChunkName: "analytics" */ "firebase/analytics"),
+    import(/* webpackChunkName: "performance" */ "firebase/performance")
   ];
   return await Promise.all(importPromises).then(([firebaseApp]) => {
     firebase = firebaseApp;
     firebaseApp.initializeApp(firebaseConfig);
+    firebaseApp.analytics();
+    firebaseApp.performance();
     return firebaseApp;
   });
 }

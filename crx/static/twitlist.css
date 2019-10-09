@@ -1,4 +1,5 @@
-.twitlist-ui-container {
+.twitlist-ui-container,
+.twitlist-rt-ui-container {
   display: flex;
 }
 
@@ -12,6 +13,17 @@
   height: 16px;
   width: 16px;
   position: relative;
+  fill: #a95bff;
+}
+
+.twitlist-rt-ui-container .twitlist-tooltip-icon svg {
+  bottom: -2px;
+  height: 12px;
+  width: 12px;
+  position: relative;
+  /* border-radius: 50%;
+  color: white;
+  background-color: #a95bff; */
   fill: #a95bff;
 }
 
@@ -29,7 +41,8 @@
   width: 450px;
 }
 
-.twitlist-ui-container-dark .twitlist-content-container {
+.twitlist-ui-container-dark .twitlist-content-container,
+.twitlist-rt-ui-container-dark .twitlist-content-container {
   color: #fff;
 }
 
@@ -54,7 +67,9 @@
 }
 
 .twitlist-ui-container:hover .twitlist-content-container,
-#edit-note.twitlist-ui-container .twitlist-content-container {
+#edit-note.twitlist-ui-container .twitlist-content-container,
+.twitlist-rt-ui-container:hover .twitlist-content-container,
+#edit-note.twitlist-rt-ui-container .twitlist-content-container {
   display: flex;
 }
 
@@ -63,6 +78,14 @@
 }
 
 #edit-note.twitlist-ui-container {
+  height: 100px;
+}
+
+.twitlist-rt-ui-container:hover {
+  height: 60px;
+}
+
+#edit-note.twitlist-rt-ui-container {
   height: 100px;
 }
 

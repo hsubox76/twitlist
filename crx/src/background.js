@@ -1,6 +1,6 @@
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/firestore';
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
 import { firebaseConfig } from "../../shared/firebase-config";
 import { ACTION, COLL } from "../../shared/constants";
 
@@ -129,30 +129,31 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       break;
     case ACTION.BG.UPDATE_NOTE:
       if (!user.uid) {
-        sendResponse({ error: 'User does not seem to be logged in.' });
-      };
-      const noteRef = firebase.firestore()
+        sendResponse({ error: "User does not seem to be logged in." });
+      }
+      const noteRef = firebase
+        .firestore()
         .collection(COLL.LISTS)
         .doc(user.uid)
         .collection(COLL.NOTES)
         .doc(request.screenname);
       noteRef
         .get()
-        .then((doc) => {
-          return doc.exists ? 'update' : 'set';
+        .then(doc => {
+          return doc.exists ? "update" : "set";
         })
-        .then((command) => {
+        .then(command => {
           return noteRef[command]({
             description: request.description,
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
           });
         })
         .then(() => {
-          console.log('sending success response');
+          console.log("sending success response");
           sendResponse({ success: true });
         })
         .catch(e => {
-          console.log('sending error response');
+          console.log("sending error response");
           sendResponse({ error: e.message });
         });
       return true;

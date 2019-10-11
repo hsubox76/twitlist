@@ -1,5 +1,12 @@
 .twitlist-ui-container,
 .twitlist-rt-ui-container {
+  display: none;
+}
+
+.always-show.twitlist-ui-container,
+.always-show.twitlist-rt-ui-container,
+article:hover .twitlist-ui-container,
+article:hover .twitlist-rt-ui-container {
   display: flex;
 }
 

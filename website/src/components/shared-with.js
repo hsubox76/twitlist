@@ -1,7 +1,7 @@
 import { renderTableContainer } from "./table-custom";
 import { appendNewElement } from "../../../shared/dom-utils";
 import { addSharee, removeSharee, updateListProperties } from "../db";
-import { VISIBILITY } from "../../../shared/constants";
+import { APP_URL, VISIBILITY } from "../../../shared/constants";
 
 export function renderSharedWith(
   { user, listProperties },
@@ -83,8 +83,8 @@ export function renderSharedWith(
     });
     appendNewElement(publicLinkContainer, {
       tag: "a",
-      text: `https://twitlist.net/?listid=${user.uid}`,
-      href: `https://twitlist.net/?listid=${user.uid}`
+      text: `${APP_URL}/?listid=${user.uid}`,
+      href: `${APP_URL}/?listid=${user.uid}`
     });
     return;
   }

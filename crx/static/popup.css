@@ -61,3 +61,11 @@
   background-color: #999;
   height: 6px;
 }
+
+.web-link {
+  margin: 5px 0 5px 5px;
+}
+
+.web-link a {
+  color: #1da1f2;
+}

@@ -1,17 +1,28 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="./popup.css" >
+    <link rel="stylesheet" type="text/css" href="./popup.css" />
   </head>
   <body class="twitlist-popup">
     <h3>Twitlist Extension</h3>
     <h4>Personal Twitter Notes</h4>
     <p id="login-text"></p>
     <div id="visibility-section">
-      <input type="checkbox" id="visibility-checkbox" />
-      <label>UI visible on tweets</label>
+      <div class="visibility-option">
+        <input type="radio" id="vis-show-all" name="visibility" />
+        <label>Show icons on all tweets</label>
+      </div>
+      <div class="visibility-option">
+        <input type="radio" id="vis-show-hover" name="visibility" />
+        <label>Show icons when hovering on tweet</label>
+      </div>
+      <div class="visibility-option">
+        <input type="radio" id="vis-hide" name="visibility" />
+        <label>Hide icons</label>
+      </div>
     </div>
-    <button id="login-button"></button>
+    <div class="web-link"><a id="web-link-anchor" href="">Manage your list (opens web page)</a></div>
+    <button id="login-button">login</button>
     <div class="footer"></div>
     <script src="popup.bundle.js"></script>
   </body>

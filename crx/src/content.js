@@ -1,5 +1,5 @@
 import { sendMessage } from "./util";
-import { ACTION, APP_URL } from "../../shared/constants";
+import { ACTION, APP_URL, UI_VISIBILITY } from "../../shared/constants";
 import {
   deleteElement,
   buildElement,
@@ -15,6 +15,7 @@ import {
 let knownUsers = {};
 let user = null;
 let shouldShowUI = true;
+let onlyShowOnHover = false;
 let isDarkTheme = false;
 
 const listSvg =
@@ -32,6 +33,7 @@ chrome.runtime.onMessage.addListener(request => {
   }
   if (request.action === ACTION.PAGE.RENDER_LIST) {
     shouldShowUI = true;
+    onlyShowOnHover = request.visibility === UI_VISIBILITY.SHOW_HOVER.id;
     if (request.knownUsers) {
       knownUsers = request.knownUsers;
     }
@@ -107,8 +109,12 @@ function removeTweetUI() {
   const containerSelect = document.getElementsByClassName(
     "twitlist-ui-container"
   );
+  const rtContainerSelect = document.getElementsByClassName(
+    "twitlist-rt-ui-container"
+  );
   const containerEls = Array.prototype.slice.call(containerSelect);
-  for (const containerEl of containerEls) {
+  const rtContainerEls = Array.prototype.slice.call(rtContainerSelect);
+  for (const containerEl of containerEls.concat(rtContainerEls)) {
     containerEl.innerHTML = "";
     containerEl.parentElement.removeChild(containerEl);
   }
@@ -213,12 +219,16 @@ function getOrCreateRTContainerEl(rtAnchorEl, rtScreenname) {
   if (isDarkTheme) {
     containerClass += " twitlist-rt-ui-container-dark";
   }
+  if (!onlyShowOnHover) {
+    containerClass += " always-show";
+  }
   const existingContainerEl = getChildWithClass(
     rtAnchorEl.parentElement.parentElement,
     "twitlist-rt-ui-container"
   );
   if (existingContainerEl) {
     containerEl = existingContainerEl;
+    containerEl.className = containerClass;
     contentEl = getChildWithClass(containerEl, "twitlist-content-container");
   } else {
     if (rtAnchorEl.parentElement.parentElement) {
@@ -254,12 +264,16 @@ function getOrCreateContainerEl(tweetEl, screenname) {
   if (isDarkTheme) {
     containerClass += " twitlist-ui-container-dark";
   }
+  if (!onlyShowOnHover) {
+    containerClass += " always-show";
+  }
   const existingContainerEl = getChildWithClass(
     tweetEl,
     "twitlist-ui-container"
   );
   if (existingContainerEl) {
     containerEl = existingContainerEl;
+    containerEl.className = containerClass;
   } else {
     const timeElement = tweetEl.querySelector("time");
     if (!timeElement) return null;
@@ -331,21 +345,24 @@ function addTweetUI() {
       if (retweeterScreenname) {
         retweeterScreenname = retweeterScreenname.slice(1).toLowerCase();
       }
-      const rtContentEl = getOrCreateRTContainerEl(
-        retweetAnchorEl,
-        retweeterScreenname
-      );
-      const existingRTInfoEl = getChildWithClass(
-        rtContentEl,
-        "twitlist-info-container"
-      );
-      if (rtContentEl.parentElement.id !== "edit-note") {
-        if (!existingRTInfoEl) {
-          // clear it out if it only had an action link.
-          rtContentEl.innerHTML = "";
+      // User doesn't need to add notes to themselves.
+      if (retweeterScreenname !== user.displayName) {
+        const rtContentEl = getOrCreateRTContainerEl(
+          retweetAnchorEl,
+          retweeterScreenname
+        );
+        const existingRTInfoEl = getChildWithClass(
+          rtContentEl,
+          "twitlist-info-container"
+        );
+        if (rtContentEl.parentElement.id !== "edit-note") {
+          if (!existingRTInfoEl) {
+            // clear it out if it only had an action link.
+            rtContentEl.innerHTML = "";
+          }
+          updateInfoEl(rtContentEl, retweeterScreenname);
+          updateActionLink(rtContentEl, retweeterScreenname);
         }
-        updateInfoEl(rtContentEl, retweeterScreenname);
-        updateActionLink(rtContentEl, retweeterScreenname);
       }
     }
 

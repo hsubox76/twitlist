@@ -2,12 +2,12 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import { firebaseConfig } from "../../shared/firebase-config";
-import { ACTION, COLL } from "../../shared/constants";
+import { ACTION, COLL, UI_VISIBILITY } from "../../shared/constants";
 
 firebase.initializeApp(firebaseConfig);
 
 let user = null;
-let isUIVisible = true;
+let uiVisibility = UI_VISIBILITY.SHOW_ALL.id;
 const provider = new firebase.auth.TwitterAuthProvider();
 let unsubscribe = null;
 
@@ -76,15 +76,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log("got request", request);
   switch (request.action) {
     case ACTION.BG.GET_UI_VISIBILITY:
-      console.log("sending", isUIVisible);
-      sendResponse({ isUIVisible });
+      console.log("sending", uiVisibility);
+      sendResponse({ uiVisibility });
       break;
-    case ACTION.BG.TOGGLE_UI:
-      isUIVisible = !isUIVisible;
+    case ACTION.BG.SET_UI_VISIBILITY:
+      uiVisibility = request.visibility;
       sendMessageToPage({
-        action: isUIVisible ? ACTION.PAGE.RENDER_LIST : ACTION.PAGE.HIDE_LIST
+        action: uiVisibility !== UI_VISIBILITY.HIDE.id ? ACTION.PAGE.RENDER_LIST : ACTION.PAGE.HIDE_LIST,
+        visibility: uiVisibility
       });
-      sendResponse({ isUIVisible });
+      sendResponse({ uiVisibility });
       break;
     case ACTION.BG.GET_USER:
       sendResponse({ user });

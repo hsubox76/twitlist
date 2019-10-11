@@ -37,7 +37,7 @@ export function deleteElement(element) {
   }
 }
 
-export function buildElement(options) {
+export function buildElement(options = {}) {
   const tagName = options.tag || 'div';
   const newElement = document.createElement(tagName);
   for (const attr in options) {

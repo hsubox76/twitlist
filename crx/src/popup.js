@@ -11,7 +11,9 @@ let webLinkAnchor = document.getElementById("web-link-anchor");
 
 let user = null;
 
-webLinkAnchor.href = APP_URL;
+webLinkAnchor.addEventListener('click', () => {
+  chrome.tabs.create({ active: true, url: APP_URL });
+});
 
 function login() {
   sendMessage({ action: ACTION.BG.SIGN_IN_USER }).then(handleUserResponse);

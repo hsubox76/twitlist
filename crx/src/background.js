@@ -14,6 +14,11 @@ let unsubscribe = null;
 firebase.auth().onAuthStateChanged(function(fetchedUser) {
   if (fetchedUser) {
     user = fetchedUser;
+    firebase.firestore().collection('lists').doc(user.uid).get().then(doc => {
+      if (doc.data().extensionPreferences) {
+        uiVisibility = doc.data().extensionPreferences.uiVisibility;
+      }
+    });
   } else {
     unsubscribe && unsubscribe();
     unsubscribe = null;
@@ -55,6 +60,7 @@ function subscribeToList(uid) {
         snap.forEach(doc => (knownUsers[doc.id] = doc.data()));
         sendMessageToPage({
           action: ACTION.PAGE.RENDER_LIST,
+          visibility: uiVisibility,
           knownUsers
         });
       } else {
@@ -81,6 +87,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       break;
     case ACTION.BG.SET_UI_VISIBILITY:
       uiVisibility = request.visibility;
+      firebase.firestore().collection('lists').doc(user.uid).update({
+        extensionPreferences: { uiVisibility: request.visibility }
+      });
       sendMessageToPage({
         action: uiVisibility !== UI_VISIBILITY.HIDE.id ? ACTION.PAGE.RENDER_LIST : ACTION.PAGE.HIDE_LIST,
         visibility: uiVisibility

@@ -1,6 +1,6 @@
 {
   "name": "Twitlist",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Adds personal custom notes about Twitter users.",
   "permissions": [
     "http://twitter.com/",

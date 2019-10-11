@@ -1,8 +1,6 @@
 import { sendMessage } from "./util";
 import { ACTION, APP_URL, UI_VISIBILITY } from "../../shared/constants";
-import {
-  appendNewElement
-} from "../../shared/dom-utils";
+import { appendNewElement } from "../../shared/dom-utils";
 
 let loginButton = document.getElementById("login-button");
 let loginText = document.getElementById("login-text");
@@ -11,7 +9,7 @@ let webLinkAnchor = document.getElementById("web-link-anchor");
 
 let user = null;
 
-webLinkAnchor.addEventListener('click', () => {
+webLinkAnchor.addEventListener("click", () => {
   chrome.tabs.create({ active: true, url: APP_URL });
 });
 
@@ -53,26 +51,28 @@ function toggleVisibilityText(response) {
 }
 
 function setVisibility(e) {
-  sendMessage({ action: ACTION.BG.SET_UI_VISIBILITY, visibility: e.target.value })
-    .then(toggleVisibilityText);
+  sendMessage({
+    action: ACTION.BG.SET_UI_VISIBILITY,
+    visibility: e.target.value
+  }).then(toggleVisibilityText);
 }
 
-visibilitySection.innerHTML = '';
+visibilitySection.innerHTML = "";
 for (const key of Object.keys(UI_VISIBILITY)) {
   const visOption = UI_VISIBILITY[key];
   const radioContainer = appendNewElement(visibilitySection);
   appendNewElement(radioContainer, {
-    tag: 'input',
-    type: 'radio',
+    tag: "input",
+    type: "radio",
     onClick: setVisibility,
     value: visOption.id,
     id: visOption.id
   });
   appendNewElement(radioContainer, {
-    tag: 'label',
-    'for': visOption.id,
+    tag: "label",
+    for: visOption.id,
     text: visOption.desc
-  })
+  });
 }
 sendMessage({ action: ACTION.BG.GET_UI_VISIBILITY }).then(toggleVisibilityText);
 sendMessage({ action: ACTION.BG.GET_USER }).then(handleUserResponse);

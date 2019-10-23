@@ -12,6 +12,7 @@
 
     <div class="container">
       <a class="instructions-link" href="#instructions">Setup Instructions</a>
+      <a class="instructions-link" href="#manage">Manage/Share Your List</a>
       <a class="instructions-link" href="#troubleshooting">Troubleshooting</a>
       <a class="instructions-link" href="#faq">Other FAQ</a>
     </div>
@@ -65,74 +66,105 @@
             <img src="/images/crx-logged-in.png" />
           </li>
           <li>
-            <h3>Check that the extension is working.</h3>
-            <p>
-              Every tweet should have a little rectangular box under the
-              person's name that says "add a note about this user".
-            </p>
-            <img src="/images/content-script-ui-1.png" />
-          </li>
-          <li>
-            <h3>Go to the website.</h3>
-            <p>
-              To add your first note, click on any "add a note about this user"
-              link under a user's name. This will take you to the website
-              (twitlist.net). If it's your first time, and it should be, you
-              will be asked to log in again.
-            </p>
-            <img src="/images/website-login.png" />
-            <p>
-              Sorry about that, but it can't be helped, a website and an
-              extension are two different things. Going forward you probably
-              won't have to log in again, unless you deliberately log out.
-            </p>
-          </li>
-          <li>
             <h3>Add a note.</h3>
             <p>
-              Type your note about this user in the large input box, and click
-              "add note".
+              Every tweet should have a little purple plus icon next to the
+              person's name. When you hover on the plus, a box will appear below
+              it saying "click to add a note about this user".
             </p>
             <img src="/images/add-note-ui-1.png" />
-          </li>
-          <li>
-            <h3>Check that it worked.</h3>
             <p>
-              It should have added the first row to your list.
+              Click the plus and the box will turn into a form allowing you to
+              add a new note:
             </p>
             <img src="/images/add-note-ui-2.png" />
             <p>
-              Also, if you go back to your Twitter tab, this note should appear
-              on this user's tweets.
+              Type in your note and click "save":
             </p>
-            <img src="/images/content-script-ui-2.png" />
-          </li>
-          <li>
-            <h3>Set sharing options.</h3>
+            <img src="/images/add-note-ui-3.png" />
             <p>
-              Lists are set to private by default, which means no one else can
-              see your list. At the bottom, it should say, "This list can be
-              seen by" and the selected option should be "nobody". The options
-              are:
+              Now the note should appear on hover, and the plus icon should turn
+              into a list icon, which indicates this is a user you've added a
+              note for.
             </p>
-            <ul>
-              <li><strong>nobody</strong> This is the default.</li>
-              <li>
-                <strong>certain users (listed below)</strong> You can share the
-                list with other users by adding them in the "share with" box at
-                the bottom of this section. You need to use their Twitter handle
-                and they need to have registered with Twitlist. If they haven't,
-                you can still add their Twitter handle and they'll be eligible
-                to see your shared list as soon as they sign up.
-              </li>
-              <li>
-                <strong>everybody</strong> You'll get a public link to share
-                this list with anyone who visits that link.
-              </li>
-            </ul>
+            <img src="/images/add-note-ui-4.png" />
           </li>
         </ol>
       </div>
+    </div>
+
+    <div class="container">
+      <a name="manage"></a>
+      <h1>Manage or Share Your List</h1>
+      <ul class="faq-list">
+        <li>
+          <h2 class="question">Logging on to the website.</h2>
+          <p>
+            To view a list of your notes, delete notes, or share your list with
+            other people, go to the website. (This will open another tab,
+            separate from your Twitter tab.) You can go there by clicking the
+            "manage notes" link in the add/edit note form on each tweet or the
+            "Manage your list (opens web page)" link in the settings.
+          </p>
+          <p><img src="/images/manage-notes-1.png" /></p>
+          <p><img src="/images/manage-notes-2.png" /></p>
+          <p>
+            This will take you to the website (twitlist.net). If it's your first
+            time, and it should be, you will be asked to log in again.
+          </p>
+          <img src="/images/website-login.png" />
+          <p>
+            Sorry about that, but it can't be helped, a website and an extension
+            are two different things. Going forward you probably won't have to
+            log in again, unless you deliberately log out.
+          </p>
+        </li>
+        <li>
+          <h2 class="question">Editing and deleting notes.</h2>
+          <p>
+            The first section should be a list of your notes. Click "edit" or
+            "delete" next to any note to edit or delete it.
+          </p>
+          <img src="/images/my-list.png" />
+        </li>
+        <li>
+          <h2 class="question">Setting sharing options.</h2>
+          <p>
+            Lists are set to private by default, which means no one else can see
+            your list. At the bottom, it should say, "This list can be seen by"
+            and the selected option should be "nobody". The options are:
+          </p>
+          <ul>
+            <li>
+              <p><strong>nobody</strong></p>
+              <p>This is the default.</p>
+              <img src="/images/shared-nobody.png" />
+            </li>
+            <li>
+              <p><strong>certain users (listed below)</strong></p>
+              <p>
+                You can share the list with other users by adding them in the
+                "share with" box at the bottom of this section. You need to use
+                their Twitter handle and they need to have registered with
+                Twitlist. If they haven't, you can still add their Twitter
+                handle and they'll be eligible to see your shared list as soon
+                as they sign up.
+              </p>
+              <img src="/images/shared-certain.png" />
+            </li>
+            <li>
+              <p>
+                <strong>everyone</strong>
+              </p>
+              <p>
+                >You'll get a public link to share this list with anyone who
+                visits that link.
+              </p>
+              <img src="/images/shared-everyone.png" />
+            </li>
+          </ul>
+        </li>
+      </ul>
     </div>
 
     <div class="container">

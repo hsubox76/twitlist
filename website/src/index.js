@@ -52,22 +52,16 @@ async function init() {
         });
       }
       if (!renderer.getState().unsubShared) {
-        subscribeToListsSharedWithUser(
-          user.uid,
-          otherLists => {
-            renderer.setState({ otherLists });
-          }
-        ).then(unsub => {
+        subscribeToListsSharedWithUser(user.uid, otherLists => {
+          renderer.setState({ otherLists });
+        }).then(unsub => {
           renderer.setState({ unsubShared: unsub });
         });
       }
       if (!renderer.getState().unsubPublic) {
-        subscribeToPublicListsSharedWithUser(
-          user.uid,
-          publicOtherLists => {
-            renderer.setState({ publicOtherLists });
-          }
-        ).then(unsub => {
+        subscribeToPublicListsSharedWithUser(user.uid, publicOtherLists => {
+          renderer.setState({ publicOtherLists });
+        }).then(unsub => {
           renderer.setState({ unsubPublic: unsub });
         });
       }

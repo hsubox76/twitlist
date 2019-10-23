@@ -51,13 +51,18 @@ export async function subscribeToListsSharedWithUser(uid, onData) {
   return ref
     .where("visibility", "==", VISIBILITY.SHARED)
     .where("sharedWith", "array-contains", uid)
-    .onSnapshot(snap => {
-      const otherLists = [];
-      snap.forEach(doc => {
-        otherLists.push(Object.assign({ creatorUid: doc.id }, doc.data()));
-      });
-      onData(otherLists);
-    }, err => { console.error(err) });
+    .onSnapshot(
+      snap => {
+        const otherLists = [];
+        snap.forEach(doc => {
+          otherLists.push(Object.assign({ creatorUid: doc.id }, doc.data()));
+        });
+        onData(otherLists);
+      },
+      err => {
+        console.error(err);
+      }
+    );
 }
 
 export async function subscribeToPublicListsSharedWithUser(uid, onData) {
@@ -65,13 +70,18 @@ export async function subscribeToPublicListsSharedWithUser(uid, onData) {
   return ref
     .where("visibility", "==", VISIBILITY.PUBLIC)
     .where("sharedWith", "array-contains", uid)
-    .onSnapshot(snap => {
-      const otherLists = [];
-      snap.forEach(doc => {
-        otherLists.push(Object.assign({ creatorUid: doc.id }, doc.data()));
-      });
-      onData(otherLists);
-    }, err => { console.error(err) });
+    .onSnapshot(
+      snap => {
+        const otherLists = [];
+        snap.forEach(doc => {
+          otherLists.push(Object.assign({ creatorUid: doc.id }, doc.data()));
+        });
+        onData(otherLists);
+      },
+      err => {
+        console.error(err);
+      }
+    );
 }
 
 export async function getGuestList(uid, listUid) {
@@ -169,13 +179,11 @@ export async function deleteNote(uid, screenname) {
 export async function updateNote(uid, screenname, updates, isNew = true) {
   const method = isNew ? "set" : "update";
   const ref = await getRef(`${COLL.LISTS}/${uid}/${COLL.NOTES}`);
-  return ref
-    .doc(screenname.toLowerCase())
-    [method](
-      Object.assign({}, updates, {
-        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-      })
-    );
+  return ref.doc(screenname.toLowerCase())[method](
+    Object.assign({}, updates, {
+      lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+    })
+  );
 }
 
 export async function removeSharee(listUid, shareeScreenname, shareeUid) {

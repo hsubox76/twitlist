@@ -11,7 +11,7 @@ code {
 .container {
   background-color: white;
   margin: 10px;
-  padding: 10px;
+  padding: 10px 20px;
 }
 
 #header-container {
@@ -36,6 +36,7 @@ ul.faq-list {
   color: steelblue;
   font-size: 1.5rem;
   font-weight: normal;
+  margin-top: 2rem;
 }
 
 .answer ol li {
@@ -67,4 +68,8 @@ a.instructions-link {
   display: block;
   border-bottom: 1px solid #ccc;
   padding: 10px 0;
+}
+
+img {
+  border: 1px solid #ccc;
 }

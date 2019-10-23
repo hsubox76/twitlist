@@ -57,11 +57,12 @@ export async function subscribeToListsSharedWithUser(uid, onData) {
         otherLists.push(Object.assign({ creatorUid: doc.id }, doc.data()));
       });
       onData(otherLists);
-    });
+    }, err => { console.error(err) });
 }
 
 export async function subscribeToPublicListsSharedWithUser(uid, onData) {
-  return (await getRef(COLL.LISTS))
+  const ref = await getRef(COLL.LISTS);
+  return ref
     .where("visibility", "==", VISIBILITY.PUBLIC)
     .where("sharedWith", "array-contains", uid)
     .onSnapshot(snap => {
@@ -70,7 +71,7 @@ export async function subscribeToPublicListsSharedWithUser(uid, onData) {
         otherLists.push(Object.assign({ creatorUid: doc.id }, doc.data()));
       });
       onData(otherLists);
-    });
+    }, err => { console.error(err) });
 }
 
 export async function getGuestList(uid, listUid) {
@@ -167,7 +168,8 @@ export async function deleteNote(uid, screenname) {
 
 export async function updateNote(uid, screenname, updates, isNew = true) {
   const method = isNew ? "set" : "update";
-  return (await getRef(`${COLL.LISTS}/${uid}/${COLL.NOTES}`))
+  const ref = await getRef(`${COLL.LISTS}/${uid}/${COLL.NOTES}`);
+  return ref
     .doc(screenname.toLowerCase())
     [method](
       Object.assign({}, updates, {
@@ -215,7 +217,8 @@ export async function addSharee(uid, screenname) {
     .then(async screennameLookupDoc => {
       if (screennameLookupDoc.exists) {
         // Found account, add account's UID to this list's sharedWith array
-        return (await getRef(COLL.LISTS, uid))
+        const ref = await getRef(COLL.LISTS, uid);
+        return ref
           .update({
             sharedWith: firebase.firestore.FieldValue.arrayUnion(
               screennameLookupDoc.data().uid
@@ -275,4 +278,37 @@ export async function addSharee(uid, screenname) {
     .catch(e => {
       console.error(e);
     });
+}
+
+export function logInToFirebase(renderer) {
+  return getFirebase().then(firebase => {
+    const provider = new firebase.auth.TwitterAuthProvider();
+    firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then(credential => {
+        if (credential.user) {
+          // Get screenname if new user and set it as profile displayname
+          if (credential.additionalUserInfo) {
+            let screenName =
+              credential.additionalUserInfo.profile["screen_name"];
+            screenName = screenName.toLowerCase();
+            if (screenName && credential.user.displayName !== screenName) {
+              credential.user
+                .updateProfile({
+                  displayName: screenName
+                })
+                .then(() => renderer.setState({ user: credential.user }));
+            } else {
+              renderer.setState({ user: credential.user });
+            }
+          }
+        } else {
+          // TODO: log error
+        }
+      })
+      .catch(e => {
+        console.error(e);
+      });
+  });
 }

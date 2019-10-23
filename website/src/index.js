@@ -52,25 +52,29 @@ async function init() {
         });
       }
       if (!renderer.getState().unsubShared) {
-        const unsubShared = subscribeToListsSharedWithUser(
+        subscribeToListsSharedWithUser(
           user.uid,
           otherLists => {
             renderer.setState({ otherLists });
           }
-        );
-        renderer.setState({ unsubShared });
+        ).then(unsub => {
+          renderer.setState({ unsubShared: unsub });
+        });
       }
       if (!renderer.getState().unsubPublic) {
-        const unsubPublic = subscribeToPublicListsSharedWithUser(
+        subscribeToPublicListsSharedWithUser(
           user.uid,
           publicOtherLists => {
             renderer.setState({ publicOtherLists });
           }
-        );
-        renderer.setState({ unsubPublic });
+        ).then(unsub => {
+          renderer.setState({ unsubPublic: unsub });
+        });
       }
     } else {
-      const { params } = renderer.getState();
+      const { params, unsubPublic, unsubShared } = renderer.getState();
+      unsubPublic && unsubPublic();
+      unsubShared && unsubShared();
       if (params.mode === "edit" || params.mode === "add") {
         firebase.auth().signInWithPopup(provider);
       } else if (params.listid) {

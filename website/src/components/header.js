@@ -1,4 +1,4 @@
-import { getFirebase } from "../db";
+import { getFirebase, logInToFirebase } from "../db";
 import { appendNewElement } from "../../../shared/dom-utils";
 
 export function renderHeader(
@@ -7,38 +7,12 @@ export function renderHeader(
   renderer
 ) {
   function login() {
-    return getFirebase().then(firebase => {
-      const provider = new firebase.auth.TwitterAuthProvider();
-      firebase
-        .auth()
-        .signInWithPopup(provider)
-        .then(credential => {
-          if (credential.user) {
-            // Get screenname if new user and set it as profile displayname
-            if (credential.additionalUserInfo) {
-              let screenName =
-                credential.additionalUserInfo.profile["screen_name"];
-              screenName = screenName.toLowerCase();
-              if (screenName && credential.user.displayName !== screenName) {
-                credential.user
-                  .updateProfile({
-                    displayName: screenName
-                  })
-                  .then(() => renderer.setState({ user: credential.user }));
-              } else {
-                renderer.setState({ user: credential.user });
-              }
-            }
-          } else {
-            // TODO: log error
-          }
-        });
-    });
+    logInToFirebase(renderer);
   }
 
   function logout() {
     listUnsub && listUnsub();
-    getFirebase.then(firebase => {
+    getFirebase().then(firebase => {
       firebase
         .auth()
         .signOut()

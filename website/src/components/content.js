@@ -1,5 +1,5 @@
 import { appendNewElement } from "../../../shared/dom-utils";
-import { getList, updateNote, deleteNote } from "../db";
+import { getList, updateNote, deleteNote, logInToFirebase } from "../db";
 import { renderList } from "./list";
 import { renderSharedWith } from "./shared-with";
 import { renderAddForm } from "./add-form";
@@ -130,7 +130,7 @@ export function renderContent(state, parent, renderer, oldState) {
       });
     }
     if (!state.params.listid) {
-      renderLoginSuggestion(state, contentContainer);
+      renderLoginSuggestion(state, contentContainer, renderer);
     }
     return;
   }
@@ -169,7 +169,7 @@ function renderError(state, parent) {
   });
 }
 
-function renderLoginSuggestion(state, parent) {
+function renderLoginSuggestion(state, parent, renderer) {
   const { params } = state;
   let suggestText =
     "Sign in with your Twitter account to edit and manage your list.";
@@ -187,6 +187,7 @@ function renderLoginSuggestion(state, parent) {
   appendNewElement(loginSuggestionContainer, {
     tag: "button",
     className: "login-suggest-button",
-    text: "Sign in with Twitter"
+    text: "Sign in with Twitter",
+    onClick: () => logInToFirebase(renderer)
   });
 }
